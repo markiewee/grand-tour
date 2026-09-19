@@ -10,8 +10,12 @@ API = "https://commons.wikimedia.org/w/api.php"
 OPEN_LICENCES = ("public domain", "pd-", "cc0", "cc by", "cc-by", "no restrictions")
 
 
+HIDDEN = re.compile(r"<(\w+)[^>]*display:\s*none[^>]*>.*?</\1>", re.S)
+
+
 def _clean(value, limit=120):
-    text = re.sub(r"<[^>]+>", "", value or "")
+    text = HIDDEN.sub("", value or "")
+    text = re.sub(r"<[^>]+>", "", text)
     return html.unescape(text).strip()[:limit]
 
 

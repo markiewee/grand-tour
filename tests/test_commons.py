@@ -44,3 +44,8 @@ def test_licence_ok():
     assert commons.licence_ok("CC0")
     assert not commons.licence_ok("CC BY-NC 2.0")
     assert not commons.licence_ok("All rights reserved")
+
+
+def test_clean_drops_hidden_wikidata_markup():
+    raw = 'between 1 July 1915 and 31 August 1915<div style="display: none;">date QS:P571,+1915</div>'
+    assert commons._clean(raw) == "between 1 July 1915 and 31 August 1915"
