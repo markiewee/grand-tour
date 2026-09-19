@@ -1,0 +1,23 @@
+{
+  "id": "KYO-APR-2027",
+  "destination": "Kyoto, Japan",
+  "travellers": ["Traveller One", "Traveller Two"],
+  "dates": { "depart": "2027-04-02", "return": "2027-04-05" },
+  "places": [
+    { "name": "Kyoto", "lat": 35.0116, "lon": 135.7681, "from": "2027-04-02", "to": "2027-04-05" }
+  ],
+  "documents": { "passport_expiry": "2031-01-01" },
+  "flights": [
+    { "direction": "outbound", "flight_number": "XX100", "from": "SIN", "to": "KIX", "date": "2027-04-02", "status": "to book" },
+    { "direction": "return", "flight_number": "XX101", "from": "KIX", "to": "SIN", "date": "2027-04-05", "status": "to book" }
+  ],
+  "accommodation": [
+    { "name": "A ryokan in Higashiyama", "checkin": "2027-04-02", "checkout": "2027-04-05", "status": "idea" }
+  ],
+  "transport": [],
+  "activities": [
+    { "date": "2027-04-03", "time": "06:30", "what": "Fushimi Inari before the crowds", "status": "idea" },
+    { "date": "2027-04-04", "time": "18:00", "what": "Kaiseki dinner in Gion", "status": "to book" }
+  ],
+  "notes": []
+}
