@@ -1,0 +1,14 @@
+{
+  "name": "grand-tour",
+  "description": "Grand Tour: trip research, planning, booking handoff and illustrated guides for Claude Code",
+  "owner": { "name": "Mark Wee" },
+  "plugins": [
+    {
+      "name": "grand-tour",
+      "description": "Research, plan, book and illustrate a trip with Claude Code",
+      "version": "0.1.0",
+      "source": "./",
+      "author": { "name": "Mark Wee" }
+    }
+  ]
+}

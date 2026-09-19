@@ -1,0 +1,10 @@
+{
+  "name": "grand-tour",
+  "description": "Research, plan, book and illustrate a trip: checked facts with sources, a day-by-day plan, a booking shortlist you pay for yourself, and a printed guide of text-free travel posters drawn from real photos.",
+  "version": "0.1.0",
+  "author": { "name": "Mark Wee" },
+  "homepage": "https://github.com/markiewee/grand-tour",
+  "repository": "https://github.com/markiewee/grand-tour",
+  "license": "MIT",
+  "keywords": ["travel", "itinerary", "travel-posters", "research", "pdf"]
+}
