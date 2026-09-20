@@ -1,0 +1,13 @@
+{
+  "name": "great-adventure-journey",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An interactive journey: sealed envelopes that open at their time, or when you get there.",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.0.0"
+  }
+}

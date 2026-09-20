@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1430">
+<meta name="robots" content="noindex, nofollow">
+<!-- ga:meta -->
+<title>A letterbox for Ren</title>
+<meta name="description" content="Write Ren a few lines here, anything you like, a memory or the thing you never got round to saying. It stays sealed until midnight on Sunday 4 April in Kyoto, which is eleven on Saturday night in Singapore, and then it comes down as a lantern.">
+<meta property="og:title" content="A letterbox for Ren">
+<meta property="og:description" content="Write Ren a few lines here, anything you like, a memory or the thing you never got round to saying. It stays sealed until midnight on Sunday 4 April in Kyoto, which is eleven on Saturday night in Singapore, and then it comes down as a lantern.">
+<meta property="og:type" content="website">
+<meta name="robots" content="noindex, nofollow">
+<!-- /ga:meta -->
+<link rel="icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poiret+One&family=Josefin+Sans:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root { --night: #0e1430; --gold: #d6a13f; --gold-soft: #f0cf86; --red: #b3342b; --jade: #2e6a5c; --ivory: #f2e7cf; --paper: #efe3c6; --mist: #a4bcb8; --ink: #1b2340; --ink-soft: #3b4054;
+          --display: "Limelight", "Didot", Georgia, serif; --label: "Josefin Sans", "Futura", "Avenir Next", sans-serif; --text: "Cormorant Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--night); color: var(--ink); font-family: var(--text); font-size: 18px; }
+  body { padding: calc(env(safe-area-inset-top, 0px) + 22px) 16px calc(env(safe-area-inset-bottom, 0px) + 36px);
+         background: radial-gradient(70% 40% at 50% 0%, rgba(240,207,134,.16), rgba(14,20,48,0) 70%), var(--night); }
+  button, input, textarea { font: inherit; color: inherit; }
+  .sheet { max-width: 520px; margin: 0 auto; background: var(--paper); border-radius: 6px; padding: 26px 20px 22px; box-shadow: inset 0 0 0 7px var(--paper), inset 0 0 0 8.5px var(--gold), 0 24px 50px -24px rgba(0,0,0,.8); }
+  .lamp { width: 44px; height: 57px; margin: -6px auto 8px; background: url(img/art/lantern.png) center / contain no-repeat; filter: drop-shadow(0 0 14px rgba(255,170,80,.45)); }
+  .lbl { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.02; margin: 8px 0 12px; text-align: center; text-wrap: balance; }
+  .intro { margin: 0 0 20px; text-align: center; color: var(--ink-soft); line-height: 1.35; text-wrap: pretty; }
+  label.f { display: block; margin: 16px 0 6px; }
+  input[type=text], textarea { width: 100%; border-radius: 12px; border: 1px solid rgba(27,35,64,.2); background: #f7efdc; padding: 11px 12px; font-size: 18px; outline: none; }
+  textarea { min-height: 160px; font-style: italic; line-height: 1.35; resize: vertical; }
+  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(214,161,63,.2); }
+  .media { display: grid; gap: 10px; margin-top: 16px; }
+  .mbox { border-radius: 14px; background: rgba(27,35,64,.06); padding: 12px 14px; display: grid; gap: 8px; }
+  .mrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px 9px; border-radius: 999px; border: 0; cursor: pointer; font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; background: var(--ink); color: var(--gold-soft); }
+  .btn.ghost { background: rgba(27,35,64,.08); color: var(--ink); }
+  .btn.rec { background: var(--red); color: #fff; }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  .hint { font-style: italic; font-size: 15px; color: var(--ink-soft); }
+  audio, video { width: 100%; border-radius: 10px; }
+  video { max-height: 50vh; background: #000; }
+  .send { width: 100%; justify-content: center; margin-top: 22px; padding: 15px 16px 13px; font-size: 11.5px; background: var(--gold); color: var(--ink); }
+  .secret { text-align: center; margin: 14px 0 0; font-family: var(--label); font-weight: 700; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); }
+  .err { color: var(--red); font-style: italic; margin: 10px 0 0; min-height: 1em; }
+  .bar { height: 4px; border-radius: 2px; background: rgba(27,35,64,.1); overflow: hidden; margin-top: 12px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .2s; }
+  .done { text-align: center; padding: 10px 0 4px; }
+  .done h1 { margin-top: 4px; }
+  .file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<main class="sheet" id="form">
+  <div class="lamp" aria-hidden="true"></div>
+  <div class="lbl" style="text-align:center; color:var(--red)" data-j="letterbox.title"></div>
+  <h1 data-j="letterbox.heading"></h1>
+  <p class="intro" data-j="letterbox.intro"></p>
+
+  <label class="f lbl" for="from">Your name</label>
+  <input type="text" id="from" autocomplete="name" maxlength="60" data-j="letterbox.namePlaceholder" data-j-attr="placeholder">
+
+  <label class="f lbl" for="text">Write a letter</label>
+  <textarea id="text" maxlength="6000" data-j="letterbox.placeholder" data-j-attr="placeholder"></textarea>
+
+  <div class="media">
+    <div class="mbox" id="voiceBox">
+      <div class="lbl">Record a voice note</div>
+      <div class="mrow"><button class="btn rec" id="recBtn" type="button">Record</button><span class="hint" id="recHint">Up to two minutes.</span></div>
+      <audio id="recAudio" controls hidden></audio>
+    </div>
+    <div class="mbox">
+      <div class="lbl">Film up to 60 seconds</div>
+      <div class="mrow"><button class="btn ghost" id="vidBtn" type="button">Film or choose a video</button><span class="hint" id="vidHint"></span></div>
+      <input class="file" type="file" id="vid" accept="video/*" capture="user" tabindex="-1">
+      <video id="vidPrev" controls playsinline hidden></video>
+    </div>
+  </div>
+
+  <button class="btn send" id="sendBtn" type="button">Seal it</button>
+  <div class="bar" id="bar" hidden><i id="barFill"></i></div>
+  <p class="err" id="err" role="alert"></p>
+  <p class="secret" data-j="letterbox.secret"></p>
+</main>
+
+<main class="sheet done" id="done" hidden>
+  <div class="lamp" aria-hidden="true"></div>
+  <div class="lbl" style="color:var(--red)">Sealed</div>
+  <h1 data-j="letterbox.sealed"></h1>
+  <p class="intro" data-j="letterbox.sealedIntro"></p>
+  <button class="btn ghost" id="again" type="button">Write another</button>
+</main>
+<script type="module" src="js/letterbox.js"></script>
+</body>
+</html>

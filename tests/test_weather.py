@@ -1,4 +1,4 @@
-from grandtour import weather
+from adventure import weather
 
 PAYLOAD = {"daily": {"time": ["2026-09-25", "2026-09-26"], "weather_code": [95, 61],
                      "temperature_2m_max": [31.4, 29.6], "temperature_2m_min": [24.2, 25.0],

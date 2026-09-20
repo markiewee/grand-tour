@@ -1,6 +1,6 @@
 import json
 
-from grandtour import commons
+from adventure import commons
 
 SEARCH_PAYLOAD = {"query": {"pages": {
     "2": {"index": 2, "title": "File:B.jpg", "imageinfo": [{"width": 800, "height": 600, "mime": "image/jpeg",

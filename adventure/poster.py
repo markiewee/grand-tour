@@ -35,7 +35,7 @@ def _image_part(path):
 
 def generate(prompt, refs, out_dir, name, takes=2, model=DEFAULT_MODEL, size="2K", client=None):
     if client is None:
-        from google import genai  # pip install "grandtour[posters]"; reads GEMINI_API_KEY
+        from google import genai  # pip install "adventure[posters]"; reads GEMINI_API_KEY
         client = genai.Client()
     os.makedirs(out_dir, exist_ok=True)
     inputs = [{"type": "text", "text": prompt}] + [_image_part(p) for p in refs]

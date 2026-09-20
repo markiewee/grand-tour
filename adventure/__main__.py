@@ -1,9 +1,12 @@
-"""Command line for the Grand Tour skills. Every command prints JSON or a file path."""
+"""Command line for The Great Adventure skills. Every command prints JSON or a file path."""
 import argparse
 import json
+import pathlib
 import sys
 
-from . import commons, poster, qa, render, trip, weather
+from . import commons, journey, plates, poster, qa, render, trip, weather
+
+ENGINE = pathlib.Path(__file__).resolve().parent.parent / "templates" / "journey"
 
 
 def _print(value):
@@ -11,7 +14,7 @@ def _print(value):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="grandtour")
+    parser = argparse.ArgumentParser(prog="adventure")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("gaps", help="list what is missing from a trip file")
@@ -63,6 +66,16 @@ def main(argv=None):
     p.add_argument("html")
     p.add_argument("pdf")
 
+    p = sub.add_parser("journey", help="check, scaffold or build an interactive journey")
+    p.add_argument("action", choices=["check", "new", "build"])
+    p.add_argument("app")
+    p.add_argument("--trip", help="a planning trip.json to draft the stops from")
+    p.add_argument("--template", help="where to copy the engine from (default: the plugin's templates/journey)")
+
+    p = sub.add_parser("plates", help="cut a poster into a phone-sized poster, a thumb and five plates")
+    p.add_argument("image")
+    p.add_argument("--out", required=True, help="the app's public/img directory")
+
     args = parser.parse_args(argv)
 
     if args.cmd == "gaps":
@@ -89,6 +102,20 @@ def main(argv=None):
         print(qa.contact_sheet(args.images, args.out))
     elif args.cmd == "pdf":
         print(render.to_pdf(args.html, args.pdf))
+    elif args.cmd == "journey":
+        if args.action == "check":
+            report = journey.check(args.app)
+            _print(report)
+            # A skill reads the exit code, so a journey with errors has to fail the command.
+            return 1 if report["errors"] else 0
+        if args.action == "new":
+            _print({"app": str(journey.new(args.template or ENGINE, args.app, args.trip))})
+        else:
+            _print(journey.build(args.app))
+    elif args.cmd == "plates":
+        cut = plates.cut(args.image, args.out)
+        _print({"poster": str(cut["poster"]), "thumb": str(cut["thumb"]),
+                "plates": [str(p) for p in cut["plates"]]})
     return 0
 
 

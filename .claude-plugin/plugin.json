@@ -1,10 +1,21 @@
 {
-  "name": "grand-tour",
-  "description": "Research, plan, book and illustrate a trip: checked facts with sources, a day-by-day plan, a booking shortlist you pay for yourself, and a printed guide of text-free travel posters drawn from real photos.",
-  "version": "0.1.0",
-  "author": { "name": "Mark Wee" },
-  "homepage": "https://github.com/markiewee/grand-tour",
-  "repository": "https://github.com/markiewee/grand-tour",
+  "name": "great-adventure",
+  "description": "Turn a trip into an adventure: checked facts with sources, a day-by-day plan, a booking shortlist you pay for yourself, a printed guide of text-free travel posters, and an interactive journey the traveller unseals stop by stop as they go.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Mark Wee"
+  },
+  "homepage": "https://github.com/markiewee/great-adventure",
+  "repository": "https://github.com/markiewee/great-adventure",
   "license": "MIT",
-  "keywords": ["travel", "itinerary", "travel-posters", "research", "pdf"]
+  "keywords": [
+    "travel",
+    "itinerary",
+    "travel-posters",
+    "research",
+    "pdf",
+    "journey",
+    "pwa",
+    "keepsake"
+  ]
 }

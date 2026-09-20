@@ -7,14 +7,14 @@ description: Use when a planned trip needs checked facts, history, reference pho
 
 ## Find the helper
 The plugin root is two folders up from this skill's base directory. Run:
-`PYTHONPATH="<plugin root>" python3 -m grandtour <command>`
+`PYTHONPATH="<plugin root>" python3 -m adventure <command>`
 
 ## Steps
 1. Read `trips/<id>/trip.json` and list the stops for each day.
 2. Start one background agent per day. Give each agent this brief, filled in:
    - The stops for that day, with times.
    - For every stop: 3 to 5 facts a traveller would enjoy, each with a source URL. Put anything unconfirmed under "Could not verify" and never state it as fact.
-   - One reference photo per real place, for drawing accurate buildings. Search Wikimedia Commons first with `grandtour commons-search "<query>"`, then save with `grandtour commons-fetch "<File:...>" --dest trips/<id>/dayN/refs --key <short_name>`. A photo from anywhere else may be used only as a private reference: record its URL and mark it `private reference only`.
+   - One reference photo per real place, for drawing accurate buildings. Search Wikimedia Commons first with `adventure commons-search "<query>"`, then save with `adventure commons-fetch "<File:...>" --dest trips/<id>/dayN/refs --key <short_name>`. A photo from anywhere else may be used only as a private reference: record its URL and mark it `private reference only`.
    - Period ephemera where the place is old enough: postcards, stamps, airline or hotel logos, maps. Save them to `trips/<id>/dayN/ephemera` the same way. Keep only files whose credit shows `open_licence: true`.
    - One text-free poster idea per stop that carries a meaning through contrast, symbol or composition (see `skills/trip-guide/poster-rules.md`).
    - Any practical problem found on the way: a venue that moved, a closure, a timing that doesn't work.

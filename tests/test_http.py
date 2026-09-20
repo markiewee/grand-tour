@@ -2,7 +2,7 @@ import urllib.error
 
 import pytest
 
-from grandtour import http
+from adventure import http
 
 
 def test_get_bytes_retries_on_429_then_succeeds(fake_response):

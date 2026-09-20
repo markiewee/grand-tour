@@ -1,0 +1,20 @@
+# The local rehearsal server, its certificates and its data never go up. server.py in particular:
+# what runs on Vercel is api/, and nothing should mistake the two.
+#
+# The root data/ folder is named by file, not as a folder. A bare "data/" also matches public/data/,
+# which is where trip.json lives, and the whole trip then goes missing from the deployment with
+# nothing in the build log to say so. None of the names below exist under public/.
+server.py
+tls
+qa
+tools
+docs
+data/key_token.txt
+data/notes.json
+data/overrides.json
+data/letters.json
+data/events.json
+data/media
+node_modules
+__pycache__
+.DS_Store

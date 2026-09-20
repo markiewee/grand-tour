@@ -1,4 +1,4 @@
-from grandtour import trip
+from adventure import trip
 
 TRIP = {
     "id": "KYO-2027", "destination": "Kyoto", "travellers": ["A", "B"],

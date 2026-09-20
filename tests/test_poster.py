@@ -2,7 +2,7 @@ import base64
 import json
 import os
 
-from grandtour import poster
+from adventure import poster
 
 STYLE = {"house_prompt": "1930s art deco travel poster, portrait 3:4", "avoid": ["photorealism", "phones"]}
 
