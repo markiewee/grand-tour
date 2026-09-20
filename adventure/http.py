@@ -5,7 +5,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-USER_AGENT = "GrandTour/0.1 (https://github.com/markiewee/grand-tour)"
+USER_AGENT = "GrandTour/0.1 (https://github.com/markiewee/great-adventure)"
 
 
 def _open(url, timeout=40):

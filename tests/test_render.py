@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from grandtour import render
+from adventure import render
 
 TEMPLATE = os.path.join(os.path.dirname(__file__), "..", "templates", "day.html")
 DAY = {"number": 2, "title": "Hà Nội", "date": "Saturday 26 September", "poster": "art/day2/hoankiem.jpg",

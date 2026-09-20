@@ -1,0 +1,6 @@
+node_modules/
+/data/
+/tls/
+.vercel/
+.env*.local
+qa/out/

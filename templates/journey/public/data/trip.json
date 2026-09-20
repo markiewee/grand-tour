@@ -1,0 +1,279 @@
+{
+ "journey": {
+  "title": "The Paper Road",
+  "for": "Ren",
+  "from": "Kai",
+  "subtitle": "Japan · 2 to 5 April",
+  "opening": "Ten envelopes across four days, Singapore to Osaka to Kyoto, each one sealed until you are standing in the right place or its hour comes round.",
+  "bookLabel": "Japan · 2027",
+  "tz": "Asia/Tokyo",
+  "tzCity": "Kyoto",
+  "demo": true,
+  "midnight": {
+   "at": "2027-04-04T00:00:00+09:00",
+   "title": "Happy birthday, Ren",
+   "dayLabel": "Sunday 4 April · Kyoto",
+   "closes": "2027-04-03T23:59:00+09:00"
+  },
+  "callback": {
+   "at": "2027-05-01T00:00:00+09:00",
+   "label": "Saturday 1 May, a month after Changi",
+   "title": "Your first answer comes back",
+   "button": "1 May"
+  },
+  "letterbox": {
+   "title": "A letterbox for Ren",
+   "intro": "Write Ren a few lines here, anything you like, a memory or the thing you never got round to saying. It stays sealed until midnight on Sunday 4 April in Kyoto, which is eleven on Saturday night in Singapore, and then it comes down as a lantern.",
+   "placeholder": "Dear Ren…",
+   "sealed": "Sealed. Nothing opens it before midnight in Kyoto.",
+   "heading": "Leave Ren a letter",
+   "namePlaceholder": "How Ren knows you",
+   "sealedIntro": "It comes down to Ren as a lantern at midnight on Sunday 4 April. Only Ren and Kai will see it.",
+   "secret": "Please do not tell Ren"
+  },
+  "appLabel": "Ren's app",
+  "demoLetters": [
+   {
+    "from": "Mina",
+    "text": "You once made us all walk an extra forty minutes to see a bridge, in the rain, and you were right about the bridge. Have a wonderful one. Bring back a stone from the river if you can, you know I collect them."
+   },
+   {
+    "from": "Tobias",
+    "text": "Thirty seconds after you land you will have found the one cafe worth going back to, and you will text me its name and nothing else. Looking forward to it already. Happy birthday."
+   },
+   {
+    "from": "Priya",
+    "text": "I still have the photo you took of the kettle. Not the view, the kettle. That is the whole reason I wanted to come and see things with you. Have the best day. Eat something you cannot pronounce."
+   },
+   {
+    "from": "Ade",
+    "text": "Happy birthday from the back of a very slow train. You are the only person I know who plans a holiday like a letter to someone. Hope it opens well."
+   },
+   {
+    "from": "Sofia",
+    "text": "Four years since the first trip and I have not once had to check whether you were having a good time, you just announce it. Enjoy every hour of this. Send the blurry ones too."
+   },
+   {
+    "from": "Jonah",
+    "text": "Say hello to the river for me. Take the long way. You always do anyway, but take it on purpose this time. Happy birthday."
+   },
+   {
+    "from": "Grandma Ruth",
+    "text": "I have never been to Japan and now I feel I have, because you described the whole route to me twice on the phone. Be careful on the steps at the shrine. I love you very much."
+   },
+   {
+    "from": "Kai",
+    "text": "Ten envelopes, and this is the eleventh. I wrote the others weeks ago and they are all about places. This one is not. Happy birthday. I would go the long way round with you anywhere.",
+    "last": true
+   }
+  ]
+ },
+ "stops": [
+  {
+   "id": "changi",
+   "n": 1,
+   "day": 1,
+   "opensAt": "2027-04-02T09:40:00+08:00",
+   "tz": "Asia/Singapore",
+   "place": "Changi Airport",
+   "city": "Singapore",
+   "address": "80 Airport Boulevard, Singapore 819642",
+   "geo": {
+    "lat": 1.3592,
+    "lng": 103.9894,
+    "r": 400
+   },
+   "lede": "Open this at the gate and not before. Changi has been taking commercial flights since 1 July 1981, and for the next six hours it is only a corridor pointing north east. Every other envelope in here sits on the far side of that flight.",
+   "question": "What do you want to be different by the time we fly home?",
+   "caption": "The departure board at Changi, every line blurred except the one that matters.",
+   "poster": "changi",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Singapore_Changi_Airport"
+   ]
+  },
+  {
+   "id": "hozenji",
+   "n": 2,
+   "day": 1,
+   "opensAt": "2027-04-02T19:10:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Hozenji Yokocho",
+   "city": "Osaka",
+   "address": "Sennichimae 1 chome, Chuo Ward, Osaka",
+   "geo": {
+    "lat": 34.668,
+    "lng": 135.5033,
+    "r": 200
+   },
+   "lede": "Two stone lanes running behind the noise of Dotonbori, and the first real meal of the trip. The temple at the end was built in 1637, and the Fudo Myoo standing in it is green to the ears from the water visitors pour over it for luck. Pour some, then go and eat.",
+   "question": "What was the first thing you noticed after walking out of the airport?",
+   "caption": "The mossed statue drawn small, with the lanterns of the alley coming on behind it.",
+   "poster": "hozenji",
+   "sources": [
+    "https://www.japan.travel/en/spot/1109/",
+    "https://www.osaka.com/thingstodo/attractions/a-brief-history-of-hozenji-minamis-24-hour-power-spot/"
+   ]
+  },
+  {
+   "id": "inari",
+   "n": 3,
+   "day": 2,
+   "opensAt": "2027-04-03T06:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Fushimi Inari Taisha",
+   "city": "Kyoto",
+   "address": "68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto",
+   "geo": {
+    "lat": 34.9672,
+    "lng": 135.7728,
+    "r": 400
+   },
+   "lede": "Up early on purpose. The shrine was founded in 711 by the Hata clan, and the mountain behind it, Inari, all 233 metres of it, is covered in torii that businesses bought one at a time. Before seven the path is quiet and the gates are just wood and paint.",
+   "caption": "The Senbon Torii seen from underneath, printed red on red.",
+   "poster": "inari",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Fushimi_Inari-taisha"
+   ]
+  },
+  {
+   "id": "tetsugaku",
+   "n": 4,
+   "day": 2,
+   "opensAt": "2027-04-03T11:20:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "The Philosopher's Path",
+   "city": "Kyoto",
+   "address": "Shishigatani Teranomaecho, Sakyo Ward, Kyoto",
+   "geo": {
+    "lat": 35.021,
+    "lng": 135.7962,
+    "r": 500
+   },
+   "lede": "A canal path with cherry trees along both banks, running between Ginkakuji and Nanzenji. It carries the name of Nishida Kitaro and Hajime Tanabe, two Kyoto University philosophers who are thought to have walked it daily while they worked things out. Thirty minutes end to end if you do not stop, which you will.",
+   "question": "If you walked this same path every morning, what would you end up thinking about?",
+   "caption": "Blossom over the canal in two inks, the water left as bare paper.",
+   "poster": "tetsugaku",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Philosopher%27s_Walk"
+   ]
+  },
+  {
+   "id": "pontocho",
+   "n": 5,
+   "day": 2,
+   "opensAt": "2027-04-03T21:20:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Pontocho",
+   "city": "Kyoto",
+   "address": "Pontocho Alley, Nabeyacho, Nakagyo Ward, Kyoto",
+   "geo": {
+    "lat": 35.0052,
+    "lng": 135.7712,
+    "r": 200
+   },
+   "lede": "One alley the width of two people, running from Shijo up to Sanjo, a single block back from the Kamo. The name is thought to come from ponte, Portuguese for bridge, left behind by traders in the sixteenth century. Last envelope of the day, so nothing is waiting after it.",
+   "caption": "Lanterns going away down the alley, the river a flat black band on the right.",
+   "poster": "pontocho",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pontoch%C5%8D"
+   ]
+  },
+  {
+   "id": "midnight",
+   "kind": "midnight",
+   "n": 6,
+   "day": 3,
+   "opensAt": "2027-04-04T00:00:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Kyoto",
+   "city": "Kyoto",
+   "lede": "Midnight in Kyoto, which is eleven at night in Singapore, because Japan sits an hour ahead and has not touched its clocks since daylight saving was abolished in 1952. What is in here was written weeks ago by people who are not in the room. Take your time with them.",
+   "caption": "A moon over tiled roofs, the one sheet in the set printed on dark paper.",
+   "poster": "midnight",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Time_in_Japan"
+   ]
+  },
+  {
+   "id": "togetsukyo",
+   "n": 7,
+   "day": 3,
+   "opensAt": "2027-04-04T08:20:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Togetsukyo Bridge",
+   "city": "Kyoto",
+   "address": "Saga Nakanoshimacho, Ukyo Ward, Kyoto",
+   "geo": {
+    "lat": 35.0129,
+    "lng": 135.6778,
+    "r": 400
+   },
+   "lede": "One hundred and fifty five metres of bridge over the Katsura, with the hills starting where the handrail ends. The span you will walk was finished in 1934, though the name is much older, from Emperor Kameyama watching the moon appear to cross it. Morning of your birthday, and nothing is booked until evening.",
+   "question": "What do you want more of in the year that starts today?",
+   "caption": "The bridge in three colours, the hills behind it left as paper.",
+   "poster": "togetsukyo",
+   "sources": [
+    "https://www.japan.travel/en/spot/72/"
+   ]
+  },
+  {
+   "id": "maruyama",
+   "n": 8,
+   "day": 3,
+   "opensAt": "2027-04-04T20:10:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Maruyama Park",
+   "city": "Kyoto",
+   "address": "Maruyamacho, Higashiyama Ward, Kyoto",
+   "geo": {
+    "lat": 35.0037,
+    "lng": 135.7815,
+    "r": 400
+   },
+   "lede": "The oldest park in Kyoto, opened in 1886, with a weeping cherry at the centre that gets lit from below after dark. The tree there now is the second one. The first went in during the Edo period, withered in 1947, and was replaced.",
+   "caption": "The weeping cherry from underneath, the lamps drawn as six white dots.",
+   "poster": "maruyama",
+   "sources": [
+    "https://www.fun-japan.jp/en/articles/8824",
+    "https://en.wikipedia.org/wiki/Maruyama_Park"
+   ]
+  },
+  {
+   "id": "kamodelta",
+   "n": 9,
+   "day": 4,
+   "opensAt": "2027-04-05T08:10:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Kamo Delta",
+   "city": "Kyoto",
+   "address": "Shimogamo Miyakawacho, Sakyo Ward, Kyoto",
+   "geo": {
+    "lat": 35.0301,
+    "lng": 135.7717,
+    "r": 300
+   },
+   "lede": "The triangle of gravel at Demachi where the Takano runs into the Kamo and the two go on as one river, thirty one kilometres of it altogether, down to the Yodo. People cross here on stepping stones cut in the shape of turtles. Last morning, and the train is not until later.",
+   "question": "Which hour of these four days would you live again exactly as it was?",
+   "caption": "The turtle stones in a line, the river printed in one flat blue.",
+   "poster": "kamodelta",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kamo_River",
+    "https://www.atlasobscura.com/places/kamogawa-river-turtle-stepping-stones"
+   ]
+  },
+  {
+   "id": "book",
+   "kind": "book",
+   "n": 10,
+   "day": 4,
+   "opensAt": "2027-04-05T11:20:00+09:00",
+   "tz": "Asia/Tokyo",
+   "place": "Kyoto Station",
+   "city": "Kyoto",
+   "lede": "You go home out of a building 470 metres from one end to the other, finished in 1997 to Hiroshi Hara's drawings. Everything you opened across four days is gathered in here, in order, with whatever you wrote beside it. Read it on the way to the airport, or keep it for Singapore.",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kyoto_Station"
+   ]
+  }
+ ]
+}

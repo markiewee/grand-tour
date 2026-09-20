@@ -1,6 +1,6 @@
 from PIL import Image
 
-from grandtour import qa
+from adventure import qa
 
 
 def test_text_found_keeps_real_words_only(tmp_path):

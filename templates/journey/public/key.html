@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1430">
+<meta name="robots" content="noindex, nofollow">
+<title>The Key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poiret+One&family=Josefin+Sans:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root { --night: #0e1430; --night2: #151d3d; --gold: #d6a13f; --gold-soft: #f0cf86; --red: #b3342b; --jade: #2e6a5c; --ivory: #f2e7cf; --paper: #efe3c6; --mist: #a4bcb8; --ink: #1b2340; --ink-soft: #3b4054;
+          --display: "Limelight", "Didot", Georgia, serif; --label: "Josefin Sans", "Futura", "Avenir Next", sans-serif; --text: "Cormorant Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--night); color: var(--ivory); font-family: var(--text); font-size: 18px; }
+  body { padding: calc(env(safe-area-inset-top, 0px) + 20px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px); }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
+  @media (min-width: 980px) { .wrap { grid-template-columns: minmax(0, 1fr) 410px; align-items: start; } .preview { position: sticky; top: 20px; } }
+  .lbl { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: 40px; line-height: 1; margin: 6px 0 4px; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0 0 12px; }
+  .intro { color: #cfc6ad; margin: 0; max-width: 60ch; }
+  .card { background: var(--night2); border-radius: 18px; padding: 16px; box-shadow: inset 0 0 0 1px rgba(242,231,207,.08); }
+  .btn { display: inline-block; padding: 11px 15px 9px; border-radius: 999px; font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; background: var(--gold); color: var(--ink); }
+  .btn.ghost { background: rgba(242,231,207,.08); color: var(--gold-soft); }
+  .btn.small { padding: 8px 11px 6px; font-size: 9.5px; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .clock { font-family: var(--display); font-size: 26px; color: var(--gold-soft); margin: 4px 0 10px; }
+  input[type=range] { width: 100%; accent-color: var(--gold); margin: 6px 0 12px; }
+  .links { display: grid; gap: 10px; }
+  .link { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(242,231,207,.05); }
+  .link code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--mist); word-break: break-all; }
+  .env { border-top: 1px solid rgba(242,231,207,.08); padding: 12px 0; }
+  .env:first-of-type { border-top: 0; }
+  .env-top { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: center; }
+  .thumb { width: 38px; height: 50px; object-fit: cover; border-radius: 3px; outline: 1px solid rgba(214,161,63,.5); background: var(--ink); }
+  .name { font-family: var(--display); font-size: 18px; line-height: 1.1; }
+  .meta { font-family: var(--label); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--mist); margin-top: 3px; }
+  .chip { font-family: var(--label); font-weight: 700; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 6px 9px 5px; border-radius: 999px; white-space: nowrap; }
+  .chip.opened { background: rgba(46,106,92,.35); color: #bfe0d6; }
+  .chip.ready { background: rgba(214,161,63,.2); color: var(--gold-soft); }
+  .chip.sealed { background: rgba(242,231,207,.07); color: var(--mist); }
+  .chip.held { background: rgba(179,52,43,.3); color: #f3b3ab; }
+  .env-body { margin: 10px 0 0 50px; display: grid; gap: 8px; }
+  textarea { width: 100%; min-height: 70px; border-radius: 12px; border: 1px solid rgba(242,231,207,.18); background: rgba(242,231,207,.05); padding: 9px 11px; font-style: italic; line-height: 1.3; resize: vertical; }
+  .saved { font-family: var(--label); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
+  .letter { border-top: 1px solid rgba(242,231,207,.08); padding: 12px 0; display: grid; gap: 6px; }
+  .letter:first-of-type { border-top: 0; }
+  .letter p { margin: 0; font-style: italic; white-space: pre-wrap; }
+  .letter.hidden { opacity: .45; }
+  .letter audio, .letter video { width: 100%; max-width: 420px; border-radius: 10px; }
+  .preview .phone { width: 100%; aspect-ratio: 390 / 844; max-height: 86vh; border-radius: 36px; overflow: hidden; box-shadow: 0 0 0 8px #03050b, 0 0 0 9.5px #2a3150; background: #000; }
+  .preview iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .muted { color: #9ea5ba; font-style: italic; }
+  .denied { max-width: 520px; margin: 18vh auto 0; text-align: center; }
+  @media (max-width: 979px) { .preview.closed .phone { display: none; } }
+</style>
+</head>
+<body>
+<div class="denied" id="denied" hidden><div class="lbl" style="color:var(--gold)">The key</div><h1>This page needs the key link</h1><p class="intro">Open the link from the server window, the one that ends in ?k=, on your own phone.</p></div>
+<div class="wrap" id="wrap" hidden>
+  <main style="display:grid; gap:18px">
+    <header>
+      <div class="lbl" style="color:var(--gold)">Only on your phone</div>
+      <h1>The key</h1>
+      <p class="intro">Open or hold any envelope, check the letters, and rehearse the whole trip with the time slider before Friday.</p>
+    </header>
+
+    <section class="card" aria-labelledby="rh">
+      <h2 id="rh">Rehearse the trip</h2>
+      <div class="lbl" style="color:var(--mist)">Pretend it is</div>
+      <div class="clock" id="rClock">Real time</div>
+      <input type="range" id="rSlider" min="0" max="1000" value="0" aria-label="Rehearsal time">
+      <div class="row">
+        <button class="btn" id="rStart">Start at Changi</button>
+        <button class="btn ghost" id="rNext">Next envelope</button>
+        <button class="btn ghost" id="rMidnight">Midnight</button>
+        <button class="btn ghost" id="rBook">The book</button>
+        <button class="btn ghost" id="rMoon" data-j="callback.button">The callback</button>
+        <button class="btn ghost" id="rReal">Back to real time</button>
+      </div>
+      <p class="muted" style="margin:10px 0 0">A rehearsal keeps its own progress on this phone and never tells the server, so nothing you try here reaches the traveller.</p>
+    </section>
+
+    <section class="card" aria-labelledby="lh">
+      <h2 id="lh">Links</h2>
+      <div class="links">
+        <div class="link"><div><div class="lbl" style="color:var(--gold)" data-j="appLabel"></div><code id="appUrl"></code></div><button class="btn small ghost" data-copy="appUrl">Copy</button></div>
+        <div class="link"><div><div class="lbl" style="color:var(--gold)">Letterbox for friends</div><code id="boxUrl"></code></div><button class="btn small ghost" data-copy="boxUrl">Copy</button></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="mh">
+      <h2 id="mh">Midnight letters</h2>
+      <div class="meta" id="lCount" style="margin:-6px 0 8px"></div>
+      <div id="letters"></div>
+    </section>
+
+    <section class="card" aria-labelledby="eh">
+      <h2 id="eh">Envelopes</h2>
+      <div id="envs"></div>
+    </section>
+  </main>
+
+  <aside class="preview closed" id="preview" aria-label="The traveller's screen">
+    <div class="row" style="margin-bottom:10px; justify-content:space-between"><div class="lbl" style="color:var(--gold)">Their screen, at the rehearsal time</div>
+      <div class="row"><button class="btn small ghost" id="pToggle">Show</button><button class="btn small ghost" id="pReset">Start over</button></div></div>
+    <div class="phone"><iframe id="frame" title="The journey, rehearsal" src="about:blank"></iframe></div>
+  </aside>
+</div>
+<script type="module" src="js/key.js"></script>
+</body>
+</html>
