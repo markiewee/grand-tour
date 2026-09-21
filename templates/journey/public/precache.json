@@ -83,6 +83,7 @@
 "js/bind.js",
 "js/book.js",
 "js/clock.js",
+"js/copy.js",
 "js/demo.js",
 "js/envelope.js",
 "js/key.js",
