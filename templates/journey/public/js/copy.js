@@ -27,9 +27,9 @@ export async function loadTheme(root, journey) {
   try {
     theme = await (await fetch('data/theme.json', { cache: 'no-cache' })).json();
   } catch (e) {
-    // A journey scaffolded before themes existed has no theme file. The pages still carry their
-    // own layout and the journey's own words, so it is better to run with the fallback nouns
-    // than to refuse to start.
+    // No theme file. Every word then prints as its own key, which is not a degraded app so much
+    // as a visibly broken one, and it is meant to look broken: `journey check` calls a missing
+    // theme an error, and the alternative is a blank screen nobody can diagnose from a photo.
   }
   setCopy(theme, journey);
   if (root) bindTheme(root);
