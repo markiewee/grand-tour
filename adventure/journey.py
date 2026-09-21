@@ -448,7 +448,12 @@ def retheme(app, theme_name, force=False):
         raise ValueError(f"this journey has been opened {len(seen)} times already. Retheming it "
                          f"would rewrite words the traveller has read. Pass --force if you mean "
                          f"it. {CAUTION}")
-    return {"app": str(app), "theme": theme_mod.apply_to(app, theme_name)["name"],
+    name = theme_mod.apply_to(app, theme_name)["name"]
+    # A phone that has already installed the journey serves its art from the cache, and the cache
+    # is only rebuilt when its name changes. Without this the new theme is on the server and the
+    # old one is still on the phone.
+    version = _stamp(app, _precache(app))
+    return {"app": str(app), "theme": name, "cache": version,
             "caution": CAUTION, "opened": len(seen)}
 
 
