@@ -38,3 +38,29 @@ def test_find_chrome_raises_when_missing(monkeypatch):
     monkeypatch.setattr(render.shutil, "which", lambda name: None)
     with pytest.raises(FileNotFoundError):
         render.find_chrome()
+
+
+def test_render_day_writes_the_theme_tokens_into_the_page(tmp_path):
+    from adventure import theme
+    out = render.render_day(DAY, TEMPLATE, tmp_path / "day.html",
+                            theme=theme.load("kyoto-woodblock"))
+    page = open(out, encoding="utf-8").read()
+    assert "--gold: #f3a24a;" in page
+    assert "family=Zen+Antique" in page
+    assert "Limelight" not in page
+
+
+def test_render_day_falls_back_to_the_default_theme(tmp_path):
+    out = render.render_day(DAY, TEMPLATE, tmp_path / "day.html")
+    page = open(out, encoding="utf-8").read()
+    assert "--gold: #d6a13f;" in page
+
+
+def test_guide_folder_lays_down_both_stylesheets(tmp_path):
+    from adventure import theme
+    made = render.guide_folder(tmp_path / "pages", theme.load("canyon-ember"))
+    assert (tmp_path / "pages" / "guide.css").exists()
+    css = (tmp_path / "pages" / "theme.css").read_text(encoding="utf-8")
+    assert "--gold: #cc662c;" in css
+    assert "Bebas+Neue" in css
+    assert made["link"].index("theme.css") < made["link"].index("guide.css")

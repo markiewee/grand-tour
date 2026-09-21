@@ -1,0 +1,19 @@
+{
+  "name": "Kyoto woodblock",
+  "house_prompt": "Japanese woodblock print in the ukiyo-e manner, night scene, flat areas of hand pulled colour, visible woodgrain and slight registration offset, limited palette of indigo, vermilion, washi cream, moss green and soot black, no gradients, fine paper fibre texture, portrait 3:4",
+  "avoid": ["photorealism", "3D render", "gradients", "phones", "crowds", "caricature", "signature", "seal stamp"],
+  "palette": {
+    "night": "#16243d", "night-deep": "#0c1526", "gold": "#f3a24a", "gold-soft": "#fae3b5",
+    "red": "#b3342b", "jade": "#3f6f63", "ivory": "#efe8d2", "paper": "#eee7d1",
+    "mist": "#7d94ab", "ink": "#16233f", "ink-soft": "#3d4a63"
+  },
+  "fonts": {
+    "display": "\"Zen Antique\", Georgia, serif",
+    "deco": "\"Zen Antique\", Georgia, serif",
+    "label": "\"Zen Kaku Gothic New\", \"Avenir Next\", sans-serif",
+    "text": "\"Shippori Mincho\", Georgia, serif",
+    "query": "family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700&family=Shippori+Mincho:wght@400;600"
+  },
+  "rise": {"asset": "crane.png", "a": "a crane", "one": "crane", "many": "cranes"},
+  "copy": {}
+}

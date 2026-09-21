@@ -4,7 +4,7 @@ import json
 import pathlib
 import sys
 
-from . import commons, journey, plates, poster, qa, render, trip, weather
+from . import commons, journey, plates, poster, qa, render, theme, theme_cut, trip, weather
 
 ENGINE = pathlib.Path(__file__).resolve().parent.parent / "templates" / "journey"
 
@@ -33,13 +33,13 @@ def main(argv=None):
     p.add_argument("--key", required=True)
     p.add_argument("--max-width", type=int, default=1600)
 
-    p = sub.add_parser("prompt", help="build a poster prompt from a concept and a house style")
-    p.add_argument("--style", required=True)
+    p = sub.add_parser("prompt", help="build a poster prompt from a concept and a theme")
+    p.add_argument("--theme", required=True, help="a theme name or a path to a theme folder")
     p.add_argument("--concept", required=True)
     p.add_argument("--reference-note")
 
     p = sub.add_parser("poster", help="generate poster takes with Gemini")
-    p.add_argument("--style", required=True)
+    p.add_argument("--theme", required=True, help="a theme name or a path to a theme folder")
     p.add_argument("--concept", required=True)
     p.add_argument("--reference-note")
     p.add_argument("--ref", action="append", default=[])
@@ -48,7 +48,7 @@ def main(argv=None):
     p.add_argument("--takes", type=int, default=2)
 
     p = sub.add_parser("flow-card", help="write a card for making the poster by hand in Google Flow")
-    p.add_argument("--style", required=True)
+    p.add_argument("--theme", required=True, help="a theme name or a path to a theme folder")
     p.add_argument("--concept", required=True)
     p.add_argument("--reference-note")
     p.add_argument("--ref", action="append", default=[])
@@ -62,15 +62,31 @@ def main(argv=None):
     p.add_argument("out")
     p.add_argument("images", nargs="+")
 
+    p = sub.add_parser("guide", help="write guide.css and the theme's stylesheet into a page folder")
+    p.add_argument("out")
+    p.add_argument("--theme", required=True, help="a theme name or a path to a theme folder")
+
     p = sub.add_parser("pdf", help="print an HTML file to PDF with headless Chrome")
     p.add_argument("html")
     p.add_argument("pdf")
 
-    p = sub.add_parser("journey", help="check, scaffold or build an interactive journey")
-    p.add_argument("action", choices=["check", "new", "build"])
+    p = sub.add_parser("journey", help="check, scaffold, build or retheme an interactive journey")
+    p.add_argument("action", choices=["check", "new", "build", "retheme"])
     p.add_argument("app")
     p.add_argument("--trip", help="a planning trip.json to draft the stops from")
+    p.add_argument("--theme", default="lantern-night", help="a theme name or a path to a theme folder")
+    p.add_argument("--force", action="store_true", help="retheme a journey that has already been opened")
     p.add_argument("--template", help="where to copy the engine from (default: the plugin's templates/journey)")
+
+    p = sub.add_parser("theme", help="scaffold a theme or cut its art to size")
+    p.add_argument("action", choices=["new", "cut"])
+    p.add_argument("name")
+    p.add_argument("--dest", help="where to write it (default: the plugin's templates/themes/<name>)")
+    p.add_argument("--from", dest="source", help="a folder of generated images, for cut")
+    p.add_argument("--moon", choices=["fill", "trim"], default="fill",
+                   help="fill if the disc runs past its frame, trim if it sits on a plain card")
+    p.add_argument("--sky-bias", type=float, default=0.5,
+                   help="0 keeps the top of the sky, 1 keeps the bottom, 0.5 the middle")
 
     p = sub.add_parser("plates", help="cut a poster into a phone-sized poster, a thumb and five plates")
     p.add_argument("image")
@@ -89,7 +105,7 @@ def main(argv=None):
     elif args.cmd == "commons-fetch":
         _print(commons.fetch(args.title, args.dest, args.key, max_width=args.max_width))
     elif args.cmd in ("prompt", "poster", "flow-card"):
-        text = poster.build_prompt(args.concept, poster.load_style(args.style), args.reference_note)
+        text = poster.build_prompt(args.concept, theme.load(args.theme), args.reference_note)
         if args.cmd == "prompt":
             print(text)
         elif args.cmd == "poster":
@@ -100,6 +116,8 @@ def main(argv=None):
         _print({"image": args.image, "words": qa.text_found(args.image)})
     elif args.cmd == "sheet":
         print(qa.contact_sheet(args.images, args.out))
+    elif args.cmd == "guide":
+        _print(render.guide_folder(args.out, theme.load(args.theme)))
     elif args.cmd == "pdf":
         print(render.to_pdf(args.html, args.pdf))
     elif args.cmd == "journey":
@@ -109,9 +127,20 @@ def main(argv=None):
             # A skill reads the exit code, so a journey with errors has to fail the command.
             return 1 if report["errors"] else 0
         if args.action == "new":
-            _print({"app": str(journey.new(args.template or ENGINE, args.app, args.trip))})
+            _print({"app": str(journey.new(args.template or ENGINE, args.app, args.trip,
+                                           theme_name=args.theme))})
+        elif args.action == "retheme":
+            _print(journey.retheme(args.app, args.theme, force=args.force))
         else:
             _print(journey.build(args.app))
+    elif args.cmd == "theme":
+        if args.action == "new":
+            _print({"theme": str(theme.new(args.name, args.dest or theme.THEMES / args.name))})
+        else:
+            if not args.source:
+                parser.error("theme cut needs --from <folder of generated images>")
+            _print(theme_cut.run(args.name, args.source, dest=args.dest,
+                                 moon_mode=args.moon, sky_bias=args.sky_bias))
     elif args.cmd == "plates":
         cut = plates.cut(args.image, args.out)
         _print({"poster": str(cut["poster"]), "thumb": str(cut["thumb"]),

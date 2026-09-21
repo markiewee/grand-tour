@@ -1,6 +1,7 @@
 """Fill the day-page template and print pages to PDF with headless Chrome."""
 import html
 import os
+import pathlib
 import shutil
 import string
 import subprocess
@@ -34,10 +35,36 @@ def row_html(row):
         det=html.escape(row.get("detail", "")), tag=tag)
 
 
-def render_day(day, template_path, out_path):
+GUIDE_CSS = pathlib.Path(__file__).resolve().parent.parent / "templates" / "guide.css"
+
+
+def guide_folder(out_dir, theme=None):
+    """Lay the two stylesheets a guide page needs next to each other.
+
+    Simple days are filled from day.html, which carries the theme inside the page. Richer days
+    are written by hand against the same classes, and those pages have no theme in them at all,
+    so guide.css on its own would leave every colour and every typeface unset.
+    """
+    from . import theme as theme_mod
+    loaded = theme if theme is not None else theme_mod.load("lantern-night")
+    out_dir = pathlib.Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(GUIDE_CSS, out_dir / "guide.css")
+    (out_dir / "theme.css").write_text(theme_mod.css(loaded), encoding="utf-8")
+    return {"dir": str(out_dir), "theme": loaded["name"],
+            "link": '<link rel="stylesheet" href="theme.css">\n'
+                    '<link rel="stylesheet" href="guide.css">'}
+
+
+def render_day(day, template_path, out_path, theme=None):
+    """Fill one day's page. The theme is written into the page rather than linked, so a guide
+    printed to PDF carries its own colours and does not depend on a stylesheet beside it."""
+    from . import theme as theme_mod
+    loaded = theme if theme is not None else theme_mod.load("lantern-night")
     with open(template_path, encoding="utf-8") as fh:
         template = string.Template(fh.read())
     page = template.substitute(
+        theme_css=theme_mod.css(loaded),
         title=html.escape(day["title"]), day_number=str(day["number"]), date=html.escape(day["date"]),
         poster=html.escape(day["poster"]), poster_alt=html.escape(day.get("poster_alt", "")),
         caption=html.escape(day.get("caption", "")), history=html.escape(day.get("history", "")),

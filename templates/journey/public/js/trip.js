@@ -1,6 +1,6 @@
 // The journey: one file, read from data/trip.json. It holds the framing copy, up to three named
 // moments, and a stop per envelope. Every moment is optional, because a journey that is not built
-// around a birthday has no midnight, no letterbox and no date to bring the first lantern back on.
+// around a birthday has no midnight, no letterbox and no date to bring the first answer back on.
 import { now, setHomeZone } from './clock.js';
 
 let TRIP = null;

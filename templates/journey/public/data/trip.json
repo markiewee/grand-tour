@@ -11,9 +11,11 @@
   "demo": true,
   "midnight": {
    "at": "2027-04-04T00:00:00+09:00",
+   "hint": "Happy birthday.",
    "title": "Happy birthday, Ren",
    "dayLabel": "Sunday 4 April · Kyoto",
-   "closes": "2027-04-03T23:59:00+09:00"
+   "closes": "2027-04-03T23:59:00+09:00",
+   "letterTitle": "Happy birthday"
   },
   "callback": {
    "at": "2027-05-01T00:00:00+09:00",
@@ -23,7 +25,7 @@
   },
   "letterbox": {
    "title": "A letterbox for Ren",
-   "intro": "Write Ren a few lines here, anything you like, a memory or the thing you never got round to saying. It stays sealed until midnight on Sunday 4 April in Kyoto, which is eleven on Saturday night in Singapore, and then it comes down as a lantern.",
+   "intro": "Write Ren a few lines here, anything you like, a memory or the thing you never got round to saying. It stays sealed until midnight on Sunday 4 April in Kyoto, which is eleven on Saturday night in Singapore, and then it comes down with the others.",
    "placeholder": "Dear Ren…",
    "sealed": "Sealed. Nothing opens it before midnight in Kyoto.",
    "heading": "Leave Ren a letter",

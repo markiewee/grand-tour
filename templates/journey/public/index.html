@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0e1430">
+<meta name="theme-color" content="#121a33">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,8 +22,14 @@
 <link rel="icon" href="img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poiret+One&family=Josefin+Sans:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/lantern.css">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/journey.css">
+<script>
+  /* The browser chrome cannot read a var(), so the theme's night is copied into the meta tag
+     once the stylesheets above have loaded. The literal in the tag is only the first paint. */
+  { const n = getComputedStyle(document.documentElement).getPropertyValue('--night').trim();
+    if (n) document.querySelector('meta[name="theme-color"]').content = n; }
+</script>
 </head>
 <body>
 <div class="device" id="device">
@@ -36,8 +42,8 @@
     <div class="lbl gold" data-j="subtitle"></div>
     <h1 data-j="title"></h1>
     <p data-j="opening"></p>
-    <button class="btn gold-btn" id="startBtn">Open the first envelope</button>
-    <button class="geo" id="geoBtn" aria-pressed="false">Let them open when I arrive</button>
+    <button class="btn gold-btn" id="startBtn" data-t="start"></button>
+    <button class="geo" id="geoBtn" aria-pressed="false" data-t="geo"></button>
     <p class="small" id="a2hs">Add it to your Home Screen first, so it still works where there is no signal.</p>
   </section>
 
@@ -57,7 +63,7 @@
       <div class="row"><div class="mini-env" id="sheetEnv"></div>
         <div><div class="lbl red" id="sheetLbl"></div><div class="t1" id="sheetPlace"></div><div class="t2" id="sheetSub"></div></div>
       </div>
-      <button class="btn" id="openBtn">Open it</button>
+      <button class="btn" id="openBtn" data-t="open"></button>
     </div>
   </section>
 
@@ -84,14 +90,14 @@
           <div class="aura" id="aura"></div>
           <div class="half l" id="halfL"></div>
           <div class="half r" id="halfR"></div>
-          <svg class="crack" id="crack" viewBox="0 0 100 100"><polyline points="52,0 47,30 56,52 46,74 51,100" fill="none" stroke="#ffe6a8" stroke-width="2.4" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px #ffd27a)"/></svg>
+          <svg class="crack" id="crack" viewBox="0 0 100 100"><polyline points="52,0 47,30 56,52 46,74 51,100" fill="none" stroke="color-mix(in srgb, var(--gold-soft) 68%, white)" stroke-width="2.4" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px var(--gold-soft))"/></svg>
           <svg class="ring" viewBox="0 0 128 128"><circle class="track" cx="64" cy="64" r="60"/><circle id="ringFill" cx="64" cy="64" r="60" transform="rotate(-90 64 64)"/></svg>
         </div>
       </div>
       </div>
     </div>
     <div id="letterStage"></div>
-    <div class="env-hint" id="hint"><div class="lbl gold2" id="hintLbl">Press and hold the seal</div><p id="hintSub"></p></div>
+    <div class="env-hint" id="hint"><div class="lbl gold2" id="hintLbl" data-t="sealHint"></div><p id="hintSub"></p></div>
   </section>
 
   <!-- 4, 5 · inside the envelope -->
@@ -104,7 +110,7 @@
         <div class="grain" data-grain style="opacity:.35"></div>
       </div>
       <div class="plates" id="chips">
-        <span class="chip" style="background:#a4bcb8"></span><span class="chip" style="background:#2e6a5c"></span><span class="chip" style="background:#d6a13f"></span><span class="chip" style="background:#b3342b"></span><span class="chip" style="background:#1b2340"></span>
+        <span class="chip" data-chip="mist"></span><span class="chip" data-chip="jade"></span><span class="chip" data-chip="gold"></span><span class="chip" data-chip="red"></span><span class="chip" data-chip="ink"></span>
       </div>
       <div class="plate-lbl lbl red" id="plateLbl">&nbsp;</div>
       <div class="content">
@@ -113,13 +119,13 @@
         <p class="reveal lede" id="stopLede"></p>
         <p class="reveal caption" id="stopCaption"></p>
         <div class="reveal q" id="q">
-          <div class="lbl gold">A question for you</div>
+          <div class="lbl gold" data-t="question"></div>
           <div class="qt" id="qText"></div>
-          <div id="qAsk"><textarea id="answer" rows="3" placeholder="Write it here…" aria-label="Your answer"></textarea>
-            <button class="btn" id="sendBtn">Send it up as a lantern</button></div>
-          <div id="qDone" hidden><p class="answered" id="qAnswer"></p><div class="answered-note">It's a lantern in your sky</div></div>
+          <div id="qAsk"><textarea id="answer" rows="3" aria-label="Your answer" data-t="answerPlaceholder" data-t-attr="placeholder"></textarea>
+            <button class="btn" id="sendBtn" data-t="send"></button></div>
+          <div id="qDone" hidden><p class="answered" id="qAnswer"></p><div class="answered-note" data-t="sent"></div></div>
         </div>
-        <div class="reveal after-stop" id="afterStop"><button class="btn" id="doneBtn">Back to your sky</button></div>
+        <div class="reveal after-stop" id="afterStop"><button class="btn" id="doneBtn" data-t="back"></button></div>
       </div>
     </div>
   </section>
@@ -129,24 +135,24 @@
     <div class="mid-head"><div class="lbl gold2" id="midLbl" data-j="midnight.dayLabel"></div></div>
     <div class="mid-body"><div class="clock">00:00</div><h2 id="midTitle" data-j="midnight.title"></h2><p class="sub" id="midSub"></p></div>
     <div id="falls"></div>
-    <div class="mid-foot"><button class="btn" id="midDone">Back to your sky</button></div>
+    <div class="mid-foot"><button class="btn" id="midDone" data-t="back"></button></div>
   </section>
 
   <!-- 10 · the book -->
   <section id="book" class="scene" aria-label="The book">
     <button class="back" id="bookBack">Sky</button>
     <div class="pages" id="pages"></div>
-    <div class="book-bar"><button class="btn" id="printBtn">Print the book</button></div>
+    <div class="book-bar"><button class="btn" id="printBtn" data-t="print"></button></div>
   </section>
 
   <div class="fly" id="fly"></div>
-  <div class="toast" id="toast"><div class="lbl gold" id="toastLbl">Sent</div><p id="toastText">Your answer is a lantern now. It stays in your sky for the rest of the trip.</p></div>
+  <div class="toast" id="toast"><div class="lbl gold" id="toastLbl" data-t="toastLabel"></div><p id="toastText" data-t="toastText"></p></div>
   <div class="peek" id="peek"></div>
   <div class="memo" id="memo"><div class="scrim" id="memoScrim"></div>
     <div class="memo-card" id="memoCard" role="dialog" aria-modal="true"><img class="thumb" id="memoThumb" alt=""><div class="lbl red" id="memoWhen"></div><h3 id="memoPlace"></h3>
-      <div class="memo-q" id="memoQ"></div><p class="memo-a" id="memoA"></p><div id="memoMedia"></div><div class="lbl mist" id="memoHint">Tap anywhere to let it go</div></div></div>
+      <div class="memo-q" id="memoQ"></div><p class="memo-a" id="memoA"></p><div id="memoMedia"></div><div class="lbl mist" id="memoHint" data-t="memoHint"></div></div></div>
 </div>
-<div class="desk-note"><b data-j="title"></b><br>Made for a phone. On a computer, drag to look around the sky.</div>
+<div class="desk-note"><b data-j="title"></b><br><span data-t="desk"></span></div>
 
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/Physics2DPlugin.min.js"></script>

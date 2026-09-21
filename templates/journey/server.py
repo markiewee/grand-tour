@@ -78,7 +78,7 @@ def key_token():
 def demo_letters():
     """The letters a demo journey carries in its own file.
 
-    A demo has nobody to write to it, and a midnight with no lanterns coming down is the one screen
+    A demo has nobody to write to it, and a midnight with nothing coming down is the one screen
     that does not survive being shown empty. On a real journey there is no demo flag and this is
     always an empty list.
     """

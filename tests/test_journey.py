@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from adventure import journey
+from adventure import journey, theme
+from adventure.__main__ import ENGINE
 
 TEMPLATE = os.path.join(os.path.dirname(__file__), "..", "templates", "journey")
 EXAMPLE = os.path.join(os.path.dirname(__file__), "..", "templates", "trip.example.json")
@@ -43,13 +44,17 @@ def a_journey(journey_over=None, stops=None):
 
 
 def a_dir(tmp_path, data, posters=("kix", "gion")):
-    """The smallest thing check will look at: a trip file and the posters it names."""
+    """The smallest thing check will look at: a trip file, the posters it names, and a theme.
+
+    A journey app with no theme has no pictures and no words, so check calls that an error. The
+    fixture dresses it in the default one rather than asking check to overlook it."""
     app = tmp_path / "app"
     (app / "public" / "data").mkdir(parents=True, exist_ok=True)
     (app / "public" / "img" / "posters").mkdir(parents=True, exist_ok=True)
     (app / "public" / "data" / "trip.json").write_text(json.dumps(data), "utf-8")
     for name in posters:
         (app / "public" / "img" / "posters" / f"{name}.jpg").write_bytes(b"jpg")
+    theme.apply_to(app, "lantern-night")
     return app
 
 
@@ -62,6 +67,7 @@ def an_app(tmp_path, data, posters=("kix", "gion")):
     (app / "public" / "data" / "trip.json").write_text(json.dumps(data), "utf-8")
     for name in posters:
         (app / "public" / "img" / "posters" / f"{name}.jpg").write_bytes(b"jpg")
+    theme.apply_to(app, "lantern-night")
     return app
 
 
@@ -309,3 +315,126 @@ def test_the_short_name_drops_the_article_and_cuts_on_a_word(tmp_path):
         journey.build(app)
         m = json.loads((app / "public" / "manifest.webmanifest").read_text("utf-8"))
         assert m["short_name"] == want, f"{title} became {m['short_name']}"
+
+
+def test_new_copies_the_theme_art_and_writes_the_generated_files(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    art = app / "public" / "img" / "art"
+    assert (art / "rise.png").exists()
+    assert not (art / "crane.png").exists()
+    assert (app / "public" / "css" / "theme.css").read_text().count("--night:") == 1
+    words = json.loads((app / "public" / "data" / "theme.json").read_text())
+    assert words["copy"]["send"] == "Send it up as a crane"
+    assert words["rise"]["many"] == "cranes"
+
+
+def test_retheme_swaps_the_art_and_the_words(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    journey.retheme(app, "canyon-ember")
+    words = json.loads((app / "public" / "data" / "theme.json").read_text())
+    assert words["copy"]["send"] == "Send it up as an ember"
+
+
+def test_retheme_refuses_a_journey_that_has_been_opened(tmp_path):
+    """The evidence is the rehearsal server's own log, which is the only record of a journey
+    having begun that lives on disk rather than on the traveller's phone."""
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    log = app / "data" / "events.json"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    log.write_text(json.dumps([{"id": "inari", "type": "opened", "at": 1}]), encoding="utf-8")
+    with pytest.raises(ValueError, match="opened"):
+        journey.retheme(app, "canyon-ember")
+
+
+def test_retheme_goes_ahead_when_forced_and_still_says_why_not_to(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    log = app / "data" / "events.json"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    log.write_text(json.dumps([{"id": "inari", "type": "answered", "at": 1}]), encoding="utf-8")
+    out = journey.retheme(app, "canyon-ember", force=True)
+    assert out["opened"] == 1
+    assert "cannot see" in out["caution"]
+    words = json.loads((app / "public" / "data" / "theme.json").read_text(encoding="utf-8"))
+    assert words["copy"]["send"] == "Send it up as an ember"
+
+
+def test_retheme_cautions_even_when_nothing_looks_travelled(tmp_path):
+    """The log only records what the rehearsal server saw. A deployed journey's events live in a
+    file store this command cannot read, so the warning goes out every time."""
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    out = journey.retheme(app, "canyon-ember")
+    assert out["opened"] == 0
+    assert "cannot see" in out["caution"]
+
+
+def test_check_fails_on_a_missing_art_file(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    (app / "public" / "img" / "art" / "moon.jpg").unlink()
+    assert any("moon.jpg" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_art_of_the_wrong_size(tmp_path):
+    from PIL import Image
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    Image.new("RGB", (10, 10)).save(app / "public" / "img" / "art" / "sky.jpg")
+    assert any("sky.jpg" in e and "768" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_a_missing_word(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    path = app / "public" / "data" / "theme.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["copy"].pop("send")
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert any("send" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_unreadable_contrast(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    css = app / "public" / "css" / "theme.css"
+    css.write_text(css.read_text(encoding="utf-8").replace("--ivory: #efe8d2;", "--ivory: #1a2740;"),
+                   encoding="utf-8")
+    assert any("contrast" in e for e in journey.check(app)["errors"])
+
+
+def test_a_freshly_themed_app_passes_the_theme_checks(tmp_path):
+    """The three shipped themes have to survive their own checks, or nobody can ship one."""
+    for name in ("lantern-night", "kyoto-woodblock", "canyon-ember"):
+        app = journey.new(ENGINE, tmp_path / name, theme_name=name)
+        assert journey.check(app)["errors"] == [], name
+
+
+def test_check_fails_when_the_stylesheet_is_missing(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    (app / "public" / "css" / "theme.css").unlink()
+    assert any("theme.css" in e for e in journey.check(app)["errors"])
+
+
+def test_new_refuses_a_theme_that_has_not_been_drawn_yet_and_leaves_nothing_behind(tmp_path):
+    half = theme.new("harbour-dusk", tmp_path / "harbour-dusk")
+    dest = tmp_path / "app"
+    with pytest.raises(FileNotFoundError, match="sky.jpg"):
+        journey.new(ENGINE, dest, theme_name=half)
+    assert not dest.exists(), "a refused scaffold must not leave a directory it cannot reuse"
+
+
+def test_check_fails_on_a_word_with_a_placeholder_still_in_it(tmp_path):
+    """copy_for catches this when a theme is applied, but a theme.json edited by hand after the
+    fact, or a journey's own override, never goes through it."""
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    path = app / "public" / "data" / "theme.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["copy"]["send"] = "Send it up as {a}"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert any("{a}" in e for e in journey.check(app)["errors"])
+
+
+def test_retheme_renames_the_offline_cache(tmp_path):
+    """A phone serves the journey from a cache it only rebuilds when the name changes, so a
+    retheme that leaves the name alone leaves the old theme's art on the phone."""
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    before = (app / "public" / "sw.js").read_text(encoding="utf-8")
+    out = journey.retheme(app, "canyon-ember")
+    after = (app / "public" / "sw.js").read_text(encoding="utf-8")
+    assert out["cache"] in after
+    assert before != after, "the service worker still names the same cache"

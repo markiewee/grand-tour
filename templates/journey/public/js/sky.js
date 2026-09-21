@@ -1,5 +1,5 @@
 // The sky: a painted night over painted hills, a painted moon with a figure under
-// the banyan, and one paper lantern for every answer sent up.
+// the banyan, and one of the theme's own lights for every answer sent up.
 import * as THREE from '../vendor/three.module.min.js';
 
 const gsap = window.gsap;
@@ -22,7 +22,7 @@ export function initSky(canvas, host) {
   const U = { uTime: { value: 0 }, uAspect: { value: 1 } };
   const loader = new THREE.TextureLoader();
   const tex = (url) => { const t = loader.load(url); t.anisotropy = 4; return t; };
-  const ART = { sky: tex('img/art/sky.jpg'), moon: tex('img/art/moon.jpg'), lantern: tex('img/art/lantern.png') };
+  const ART = { sky: tex('img/art/sky.jpg'), moon: tex('img/art/moon.jpg'), rise: tex('img/art/rise.png') };
 
   // the painted sky, cover-fitted, with one thin band of mist drifting over the peaks
   const bg = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
@@ -73,9 +73,9 @@ export function initSky(canvas, host) {
   }));
   moon.position.set(-3.1, 8.0, -30); moon.scale.setScalar(12.5); scene.add(moon);
 
-  // lanterns
-  const lanternMat = (seed) => new THREE.ShaderMaterial({
-    uniforms: { ...U, uSeed: { value: seed }, uLife: { value: 1 }, uTex: { value: ART.lantern } }, transparent: true, depthWrite: false, vertexShader: VERT,
+  // what goes up when a question is answered
+  const riseMat = (seed) => new THREE.ShaderMaterial({
+    uniforms: { ...U, uSeed: { value: seed }, uLife: { value: 1 }, uTex: { value: ART.rise } }, transparent: true, depthWrite: false, vertexShader: VERT,
     fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uSeed; uniform float uLife; uniform sampler2D uTex; ${COMMON}
       void main(){
         vec4 tx = texture2D(uTex, vUv);
@@ -96,8 +96,8 @@ export function initSky(canvas, host) {
   // 25 places in the sky, none of them over the moon or under the sheet.
   //
   // The two multipliers below must not add up to a whole number. 0.6180339 and 0.3819660 sum to 1,
-  // which makes frac(i*a2) exactly 1 - frac(i*a1): every lantern then lands on one diagonal line
-  // and they all appear to hang together. These are 1/g and 1/g^2 of the plastic number
+  // which makes frac(i*a2) exactly 1 - frac(i*a1): every one of them then lands on one diagonal
+  // line and they all appear to hang together. These are 1/g and 1/g^2 of the plastic number
   // g = 1.3247179, the R2 sequence, which is built to cover a plane evenly. z uses the golden
   // ratio, which shares no whole-number sum with either.
   const A1 = 0.7548776662, A2 = 0.5698402910, A3 = 0.6180339887;
@@ -119,24 +119,24 @@ export function initSky(canvas, host) {
       SLOTS.push({ pos: [x, y, z], p });
     }
   }
-  const lanterns = [];
-  function addLantern(key, slot, seed = Math.random()) {
+  const risen = [];
+  function addRise(key, slot, seed = Math.random()) {
     if (!SLOTS.length) makeSlots();
-    // Whatever index the caller asks for, two lanterns never share a place. Asking wrapped around
+    // Whatever index the caller asks for, two of them never share a place. Asking wrapped around
     // the list before, which sat four pairs exactly on top of each other.
-    const taken = new Set(lanterns.map((L) => L.slot));
+    const taken = new Set(risen.map((L) => L.slot));
     let i = ((slot % SLOTS.length) + SLOTS.length) % SLOTS.length;
     for (let n = 0; n < SLOTS.length && taken.has(i); n++) i = (i + 1) % SLOTS.length;
     const [x, y, z] = SLOTS[i].pos;
     const g = new THREE.Group();
     const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.6), glowMat(seed));
-    const body = new THREE.Mesh(new THREE.PlaneGeometry(.78, 1.02), lanternMat(seed));
+    const body = new THREE.Mesh(new THREE.PlaneGeometry(.78, 1.02), riseMat(seed));
     body.position.z = .01; g.add(glow, body); g.position.set(x, y, z); scene.add(g);
     const L = { key, g, x, y, z, seed, slot: i, phase: seed * 6.28 };
-    lanterns.push(L);
+    risen.push(L);
     return L;
   }
-  function removeAll() { for (const L of lanterns) scene.remove(L.g); lanterns.length = 0; }
+  function removeAll() { for (const L of risen) scene.remove(L.g); risen.length = 0; }
 
   function resize() {
     const r = host.getBoundingClientRect();
@@ -155,7 +155,7 @@ export function initSky(canvas, host) {
     if (!reduced) { look.x += (look.tx - look.x) * .04; look.y += (look.ty - look.y) * .04; }
     camera.position.x = look.x * .55; camera.position.y = -look.y * .35; camera.lookAt(0, 1.2, -20);
     const sway = reduced ? 0 : 1;
-    for (const L of lanterns) {
+    for (const L of risen) {
       L.g.position.x = L.x + Math.sin(t * .35 + L.phase) * .12 * sway;
       L.g.position.y = L.y + Math.sin(t * .52 + L.phase * 1.7) * .08 * sway;
       L.g.rotation.z = Math.sin(t * .45 + L.phase) * .06 * sway;
@@ -167,9 +167,9 @@ export function initSky(canvas, host) {
 
   const v3 = new THREE.Vector3();
   function screenPos(L) { L.g.getWorldPosition(v3); v3.project(camera); const r = canvas.getBoundingClientRect(); return { x: (v3.x + 1) / 2 * r.width, y: (1 - v3.y) / 2 * r.height }; }
-  function lanternAt(x, y) {
+  function riseAt(x, y) {
     let best = null, bd = 1e9;
-    for (const L of lanterns) { const p = screenPos(L); const d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = L; } }
+    for (const L of risen) { const p = screenPos(L); const d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = L; } }
     return bd < 52 ? best : null;
   }
 
@@ -180,7 +180,7 @@ export function initSky(canvas, host) {
   });
 
   return {
-    addLantern, removeAll, lanterns, screenPos, lanternAt, frameHooks,
+    addRise, removeAll, risen, screenPos, riseAt, frameHooks,
     setFull(v) { gsap.to(moon.material.uniforms.uFull, { value: v, duration: 2 }); },
     // at midnight the moon comes to the top of the screen, over the clock
     moonTo(centre) { gsap.to(moon.position, { x: centre ? 0 : -3.1, y: centre ? 12.9 : 8.0, duration: centre && !reduced ? 2.4 : .01, ease: 'power2.inOut' }); },

@@ -1,7 +1,0 @@
-{
-  "name": "1930s national park screenprint",
-  "house_prompt": "1930s WPA national park screenprint poster, flat layered silkscreen colours, limited palette of burnt orange, forest green, dusk purple, cream and deep navy, simplified landscape forms, visible layer registration, bold sky shapes, portrait 3:4",
-  "avoid": ["photorealism", "3D render", "gradients", "phones", "crowds", "caricature"],
-  "palette": { "red": "#c4552f", "green": "#35573f", "gold": "#e0a340", "ivory": "#f1e6cc", "ink": "#1f2a44", "mist": "#8c7aa0", "paper": "#ece0c2" },
-  "fonts": { "display": "Bebas Neue", "deco": "Bebas Neue", "label": "Oswald", "text": "Libre Baskerville" }
-}

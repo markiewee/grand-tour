@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 
 from adventure import poster
@@ -50,8 +49,16 @@ def test_flow_card_lists_refs_and_prompt(tmp_path):
     assert "ref_bridge.png" in text and "the prompt" in text and "hoankiem_1.jpg" in text
 
 
-def test_bundled_styles_have_prompt_and_palette():
-    root = os.path.join(os.path.dirname(__file__), "..", "templates", "styles")
-    for name in ("art-deco.json", "wpa-screenprint.json"):
-        style = json.load(open(os.path.join(root, name), encoding="utf-8"))
-        assert style["house_prompt"] and style["palette"] and style["fonts"]
+def test_bundled_themes_carry_a_house_prompt():
+    from adventure import theme
+    for name in ("lantern-night", "kyoto-woodblock", "canyon-ember"):
+        loaded = theme.load(name)
+        assert loaded["house_prompt"] and loaded["palette"] and loaded["fonts"]
+
+
+def test_build_prompt_reads_a_named_theme():
+    from adventure import theme
+    text = poster.build_prompt("A fox shrine at dusk", theme.load("kyoto-woodblock"))
+    assert "ukiyo-e" in text
+    assert "Avoid photorealism" in text
+    assert "no letters" in text

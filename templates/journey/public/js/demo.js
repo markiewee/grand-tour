@@ -41,7 +41,7 @@ export function setupDemo(journey, stops, state, save) {
     b.type = 'button'; b.textContent = m.label;
     b.addEventListener('click', () => {
       // Everything before this point is treated as already lived through, so the road is filled in
-      // and the sky has lanterns in it. Reloading is the honest way to restart every animation.
+      // and the sky is full. Reloading is the honest way to restart every animation.
       const opened = {}, answers = {};
       stops.slice(0, m.upto).forEach((s, i) => {
         opened[s.id] = s.at + 30e3;

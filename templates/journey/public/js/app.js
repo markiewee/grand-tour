@@ -1,6 +1,7 @@
 import { now, fmt, onClockChange, rehearsing } from './clock.js';
 import { loadTrip, trip, journey, stops, stopById, statusOf, nextStop, tzOf, distanceM } from './trip.js';
 import { bindCopy } from './bind.js';
+import { loadTheme, t, rise } from './copy.js';
 import { setupDemo } from './demo.js';
 import { projectStops, cityLabels } from './map.js';
 import { state, load, save, markOpened, setAnswer, fetchRemote, resetAll } from './store.js';
@@ -40,9 +41,9 @@ const canvas = $('#sky');
 const dayOf = (s) => `Day ${s.day}`;
 function whenLabel(s) { return `${dayOf(s)} · ${fmt.time(s.at, tzOf(s))}`; }
 function opensLine(s) {
-  const t = fmt.time(s.at, tzOf(s));
+  const time = fmt.time(s.at, tzOf(s));
   const sameDay = fmt.ymd(now(), tzOf(s)) === fmt.ymd(s.at, tzOf(s));
-  const when = sameDay ? t : `${t} on ${fmt.day(s.at, tzOf(s))}`;
+  const when = sameDay ? time : `${time} on ${fmt.day(s.at, tzOf(s))}`;
   if (s.kind === 'midnight') {
     const where = journey().tzCity ? ` in ${journey().tzCity}` : '';
     return sameDay || now() > s.at - 36e5 * 20 ? `Opens at midnight${where}.` : `Opens at midnight on ${fmt.day(s.at, tzOf(s))}.`;
@@ -51,15 +52,15 @@ function opensLine(s) {
   return s.geo ? `Opens when you get there, or at ${when}.` : `Opens at ${when}.`;
 }
 function tripDayLabel() {
-  const t = now(), all = stops();
+  const at = now(), all = stops();
   const zone = journey().tz;
   // Count whole days in the journey's own zone. Doing it in milliseconds gets the answer wrong
   // by one whenever the traveller's phone is in a different zone from the journey.
   const midday = (ms) => Date.parse(`${fmt.ymd(ms, zone)}T12:00:00Z`);
-  const d = Math.round((midday(t) - midday(all[0].at)) / 864e5) + 1;
-  if (d < 1) return fmt.day(t, zone);
+  const d = Math.round((midday(at) - midday(all[0].at)) / 864e5) + 1;
+  if (d < 1) return fmt.day(at, zone);
   if (d > all[all.length - 1].day) return 'Home';
-  return `Day ${d} · ${fmt.day(t, zone)}`;
+  return `Day ${d} · ${fmt.day(at, zone)}`;
 }
 
 /* ---------------- scenes ---------------- */
@@ -74,20 +75,20 @@ function show(id, { fade = true } = {}) {
   if (id === 'home') renderHome();
 }
 
-/* ---------------- lanterns: one for every answer ---------------- */
-function syncLanterns() {
-  const have = new Set(sky.lanterns.map((L) => L.key));
-  // A lantern keeps its place in the sky for the whole journey, so the slot is fixed by where the
+/* ---------------- the sky: one light for every answer ---------------- */
+function syncRisen() {
+  const have = new Set(sky.risen.map((L) => L.key));
+  // A light keeps its place in the sky for the whole journey, so the slot is fixed by where the
   // envelope sits among the ones that ask a question. Numbering by its place on the road counted to
   // 25, further than there are places in the sky, and the count wrapped.
   const asking = stops().filter((q) => q.question);
   for (const s of stops()) {
     if (!state.answers[s.id] || have.has(s.id)) continue;
     const i = asking.findIndex((q) => q.id === s.id);
-    sky.addLantern(s.id, i < 0 ? asking.length : i, ((s.n * 0.618) % 1));
+    sky.addRise(s.id, i < 0 ? asking.length : i, ((s.n * 0.618) % 1));
   }
 }
-function lanternContent(L) {
+function riseContent(L) {
   const s = stopById(L.key); const a = state.answers[s.id];
   return { thumb: s.poster ? `img/thumbs/${s.poster}.jpg` : null, when: `${fmt.day(s.at, tzOf(s))} · ${fmt.time(a.at, tzOf(s))}`, title: s.place, q: s.question, a: a.text };
 }
@@ -126,17 +127,17 @@ function renderRoute() {
         const cp = svg('clipPath', { id: `cp-${s.id}` }); cp.appendChild(svg('circle', { cx: x, cy: y, r })); defs.appendChild(cp);
         g.appendChild(svg('image', { href: `img/thumbs/${s.poster}.jpg`, x: x - r, y: y - r * 1.34, width: r * 2, height: r * 2.68, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#cp-${s.id})` }));
       } else {
-        g.appendChild(svg('circle', { cx: x, cy: y, r: r - 2, fill: s.kind === 'midnight' ? '#efe3c6' : '#2e6a5c' }));
+        g.appendChild(svg('circle', { cx: x, cy: y, r: r - 2, fill: s.kind === 'midnight' ? 'var(--paper)' : 'var(--jade)' }));
       }
       g.appendChild(svg('circle', { class: 'ring', cx: x, cy: y, r: r + .5 }));
     } else if (nx && s.id === nx.id) {
-      const pulse = svg('circle', { cx: x, cy: y, r: 11, fill: 'none', stroke: '#d6a13f', 'stroke-width': 1.6, id: 'pulse' });
+      const pulse = svg('circle', { cx: x, cy: y, r: 11, fill: 'none', stroke: 'var(--gold)', 'stroke-width': 1.6, id: 'pulse' });
       g.appendChild(pulse);
-      g.appendChild(svg('circle', { cx: x, cy: y, r: 6.5, fill: st === 'ready' ? '#b3342b' : 'rgba(179,52,43,.35)', stroke: '#f0cf86', 'stroke-width': 1.6 }));
+      g.appendChild(svg('circle', { cx: x, cy: y, r: 6.5, fill: st === 'ready' ? 'var(--red)' : 'color-mix(in srgb, var(--red) 35%, transparent)', stroke: 'var(--gold-soft)', 'stroke-width': 1.6 }));
     } else {
       g.appendChild(svg('circle', { class: 'stop-dot', cx: x, cy: y, r: s.kind ? 3.4 : 2.6 }));
     }
-    const hit = svg('circle', { class: 'stop-hit', cx: x, cy: y, r: 14, 'data-id': s.id, role: 'button', 'aria-label': st === 'opened' ? s.place : 'Sealed envelope' });
+    const hit = svg('circle', { class: 'stop-hit', cx: x, cy: y, r: 14, 'data-id': s.id, role: 'button', 'aria-label': st === 'opened' ? s.place : t('sealedLabel') });
     g.appendChild(hit);
   }
   if (pulseTween) pulseTween.kill();
@@ -156,19 +157,19 @@ function renderSheet() {
   const nx = nextStop(state);
   const btn = $('#openBtn');
   if (!nx) {
-    $('#sheetLbl').textContent = 'The whole road';
+    $('#sheetLbl').textContent = t('allOpenLabel');
     $('#sheetPlace').textContent = `All ${stops().length} are open`;
-    $('#sheetSub').textContent = 'Your book has everything in it.';
-    btn.textContent = 'Read your book'; btn.className = 'btn'; btn.dataset.action = 'book';
+    $('#sheetSub').textContent = t('allOpenSub');
+    btn.textContent = t('readBook'); btn.className = 'btn'; btn.dataset.action = 'book';
     $('#sheetEnv').className = 'mini-env';
     return;
   }
   const st = statusOf(nx, state);
-  const t = fmt.time(nx.at, tzOf(nx));
-  $('#sheetLbl').textContent = nx.kind === 'midnight' ? 'Next envelope · 00:00' : `Next envelope · ${t}`;
+  const time = fmt.time(nx.at, tzOf(nx));
+  $('#sheetLbl').textContent = nx.kind === 'midnight' ? `${t('nextEnvelope')} · 00:00` : `${t('nextEnvelope')} · ${time}`;
   $('#sheetPlace').textContent = nx.place;
-  $('#sheetSub').textContent = st === 'ready' ? (nx.n === 1 ? 'Your first envelope. Hold the seal to open it.' : 'It is ready. Hold the seal to open it.') : opensLine(nx);
-  btn.textContent = st === 'ready' ? 'Open it' : 'See the envelope';
+  $('#sheetSub').textContent = st === 'ready' ? (nx.n === 1 ? t('firstReady') : t('ready')) : opensLine(nx);
+  btn.textContent = st === 'ready' ? t('open') : t('seeEnvelope');
   btn.className = st === 'ready' ? 'btn' : 'btn sealed';
   btn.dataset.action = 'next';
   $('#sheetEnv').className = 'mini-env' + (nx.kind === 'midnight' ? ' moon' : '');
@@ -177,11 +178,11 @@ function renderSheet() {
 function renderHome() {
   $('#homeWhen').textContent = tripDayLabel();
   const n = Object.keys(state.answers).length;
-  $('#count').textContent = n ? `${n} ${n === 1 ? 'lantern' : 'lanterns'} · tap one to read it` : 'Your answers become lanterns here';
-  syncLanterns();
+  $('#count').textContent = n ? `${n} ${n === 1 ? rise().one : rise().many} · ${t('countLine')}` : t('emptySky');
+  syncRisen();
   renderRoute();
   renderSheet();
-  maybeReturnFirstLantern();
+  maybeReturnFirstRise();
 }
 
 /* ---------------- opening an envelope ---------------- */
@@ -193,7 +194,7 @@ function goEnvelope(s, force = false) {
   showEnvelope(s, st === 'ready', {
     when: s.kind === 'midnight' ? `${dayOf(s)} · 00:00` : whenLabel(s),
     place: s.place,
-    hint: st === 'ready' ? (s.kind === 'midnight' ? 'Happy birthday.' : s.kind === 'book' ? 'The last one.' : 'Hold it until the gold ring closes.') : opensLine(s),
+    hint: st === 'ready' ? (s.kind === 'midnight' ? (journey().midnight?.hint || t('hintHold')) : s.kind === 'book' ? t('hintLast') : t('hintHold')) : opensLine(s),
   });
   gsap.to('#sheet', { yPercent: 130, duration: .45, ease: 'power3.in' });
   gsap.to('#route, #home .top, #count', { opacity: 0, duration: .35 });
@@ -225,14 +226,14 @@ function afterOpen(s) {
   opening = null;
 }
 
-/* ---------------- home: taps on lanterns and stops ---------------- */
+/* ---------------- home: taps on the sky and on the stops ---------------- */
 let tapStart = null;
 function setupHomeTaps() {
   const home = $('#home');
   home.addEventListener('pointerdown', (e) => {
     if (e.target.closest('#sheet, button, .stop-hit')) return;
     const r = canvas.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top;
-    tapStart = { x, y, t: performance.now(), L: sky.lanternAt(x, y) };
+    tapStart = { x, y, t: performance.now(), L: sky.riseAt(x, y) };
     if (tapStart.L) sky.grow(tapStart.L, 1.18, .12, 'power2.out');
   });
   home.addEventListener('pointerup', (e) => {
@@ -241,7 +242,7 @@ function setupHomeTaps() {
     if (!L) return;
     if (moved < 12 && quick) {
       sky.grow(L, 1.7);
-      openMemo(lanternContent(L), sky.screenPos(L), () => sky.grow(L, 1, .6, 'power3.out'));
+      openMemo(riseContent(L), sky.screenPos(L), () => sky.grow(L, 1, .6, 'power3.out'));
     } else sky.grow(L, 1, .3, 'power2.out');
   });
   $('#stops').addEventListener('click', (e) => {
@@ -265,15 +266,15 @@ function peek(text) {
   gsap.to(p, { opacity: 0, duration: .4, delay: 2.2 });
 }
 
-/* ---------------- the callback: the first lantern comes back ---------------- */
-function maybeReturnFirstLantern() {
+/* ---------------- the callback: the first answer comes back ---------------- */
+function maybeReturnFirstRise() {
   const first = stops()[0];
   const cb = journey().callback;
   if (!cb || !journey().callbackAt) return;
   if (state.returned || !state.answers[first.id] || now() < journey().callbackAt || memoOpen() || scene !== 'home') return;
   setTimeout(() => {
-    openMemo({ thumb: `img/thumbs/${first.poster}.jpg`, when: cb.label || '', title: cb.title || 'Your first lantern came back',
-      q: first.question, a: state.answers[first.id].text, hint: 'Tap anywhere to let it go again' }, { x: 120, y: 120 },
+    openMemo({ thumb: `img/thumbs/${first.poster}.jpg`, when: cb.label || '', title: cb.title || t('firstBack'),
+      q: first.question, a: state.answers[first.id].text, hint: t('memoHintAgain') }, { x: 120, y: 120 },
       () => { state.returned = true; save(); });
   }, 1200);
 }
@@ -295,6 +296,7 @@ function watchPlace() {
 /* ---------------- boot ---------------- */
 async function boot() {
   await loadTrip();
+  await loadTheme(document, journey());
   bindCopy(document, journey());
   load();
   setupDemo(journey(), stops(), state, save);
@@ -318,7 +320,7 @@ async function boot() {
     },
     onFlown: (s) => {
       scene = 'home'; document.querySelectorAll('.scene').forEach((x) => x.classList.toggle('on', x.id === 'home')); gsap.set('#home', { opacity: 1 });
-      const L = sky.lanterns.find((x) => x.key === s.id);
+      const L = sky.risen.find((x) => x.key === s.id);
       if (L) gsap.fromTo(L.g.scale, { x: .2, y: .2 }, { x: 1, y: 1, duration: 1.2, ease: 'expo.out' });
       gsap.fromTo('#toast', { opacity: 0 }, { opacity: 1, duration: .6 }); gsap.to('#toast', { opacity: 0, duration: .8, delay: 3.2 });
       gsap.to('#sheet', { yPercent: 0, duration: .9, ease: 'expo.out', delay: 2.8 });
@@ -334,8 +336,8 @@ async function boot() {
   });
   $('#geoBtn').addEventListener('click', () => {
     if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(() => { state.geo = true; save(); $('#geoBtn').setAttribute('aria-pressed', 'true'); $('#geoBtn').textContent = 'They will open when you arrive'; watchPlace(); },
-      () => { $('#geoBtn').textContent = 'They will open on time instead'; }, { timeout: 20000 });
+    navigator.geolocation.getCurrentPosition(() => { state.geo = true; save(); $('#geoBtn').setAttribute('aria-pressed', 'true'); $('#geoBtn').textContent = t('geoOn'); watchPlace(); },
+      () => { $('#geoBtn').textContent = t('geoOff'); }, { timeout: 20000 });
   });
   document.getElementById('device').addEventListener('click', enableTilt);
   setupHomeTaps();
@@ -374,7 +376,7 @@ function qaJump(jump) {
   if (jump === 'stop') { renderStop(s, { when: whenLabel(s), answer: state.answers[s.id] && state.answers[s.id].text, animate: false }); show('stop', { fade: false }); return; }
   if (jump === 'midnight') { show('midnight', { fade: false }); sky.setFull(1); sky.moonTo(true); showMidnight(state.letters, journey()); return; }
   if (jump === 'book') { renderBook({ trip: trip(), state, tzOf }); show('book', { fade: false }); return; }
-  if (jump === 'memo') { show('home', { fade: false }); setTimeout(() => { const L = sky.lanterns[0]; if (L) openMemo(lanternContent(L), sky.screenPos(L)); }, 900); }
+  if (jump === 'memo') { show('home', { fade: false }); setTimeout(() => { const L = sky.risen[0]; if (L) openMemo(riseContent(L), sky.screenPos(L)); }, 900); }
 }
 
 boot();

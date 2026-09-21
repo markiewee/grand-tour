@@ -1,0 +1,22 @@
+{
+  "name": "Canyon ember",
+  "house_prompt": "1930s WPA national park screenprint, flat layered silkscreen colour, visible layer registration, bold simplified forms, limited palette of burnt orange, forest green, dusk purple, cream and deep navy, no gradients, slight paper texture, portrait 3:4",
+  "avoid": ["photorealism", "3D render", "gradients", "phones", "crowds", "caricature"],
+  "palette": {
+    "night": "#17213c", "night-deep": "#0b1223", "gold": "#cc662c", "gold-soft": "#f2eccc",
+    "red": "#c4552f", "jade": "#35573f", "ivory": "#efe8d2", "paper": "#eee7d1",
+    "mist": "#8c7aa0", "ink": "#122242", "ink-soft": "#3a4560"
+  },
+  "fonts": {
+    "display": "\"Bebas Neue\", Impact, sans-serif",
+    "deco": "\"Bebas Neue\", Impact, sans-serif",
+    "label": "\"Oswald\", \"Avenir Next\", sans-serif",
+    "text": "\"Libre Baskerville\", Georgia, serif",
+    "query": "family=Bebas+Neue&family=Oswald:wght@400;600&family=Libre+Baskerville:ital@0;1"
+  },
+  "rise": {"asset": "ember.png", "a": "an ember", "one": "ember", "many": "embers"},
+  "copy": {
+    "hintHold": "Hold it until the ring burns closed.",
+    "emptySky": "Your answers go up as {many} here"
+  }
+}

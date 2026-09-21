@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Theme kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poiret+One&family=Josefin+Sans:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700&family=Shippori+Mincho:wght@400;600&family=Bebas+Neue&family=Oswald:wght@400;600&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0a0c12; color: #e8e4da; font: 15px/1.6 "Josefin Sans", system-ui, sans-serif; padding: 34px 24px 70px; }
+  h1 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 400; font-size: 34px; margin: 0 0 6px; }
+  .lede { max-width: 62ch; color: #9aa0b0; margin: 0 0 34px; }
+  .rail { display: flex; gap: 34px; align-items: flex-start; flex-wrap: wrap; }
+  .col { width: 372px; }
+
+  .phone { position: relative; width: 372px; height: 760px; border-radius: 44px; overflow: hidden;
+           box-shadow: 0 0 0 9px #03050b, 0 0 0 10.5px #2a3150, 0 40px 90px -34px rgba(0,0,0,.95); }
+  .phone .bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .phone .wash { position: absolute; inset: 0; }
+  .moon { position: absolute; width: 132px; height: 132px; left: 26px; top: 74px; border-radius: 50%;
+          background-size: cover; background-position: center; }
+  .moon::after { content: ""; position: absolute; inset: -22px; border-radius: 50%;
+                 border: 1px solid var(--halo); opacity: .45; }
+  .rise { position: absolute; background-size: contain; background-repeat: no-repeat; background-position: center; }
+  .top { position: absolute; left: 22px; right: 22px; top: 26px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .brand { font-family: var(--display); font-size: 21px; line-height: 1.05; color: var(--ivory); }
+  .when { font-family: var(--label); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--mist); text-align: right; line-height: 1.7; }
+  .count { position: absolute; left: 22px; top: 232px; font-family: var(--label); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-soft); }
+
+  .sheet { position: absolute; left: 12px; right: 12px; bottom: 12px; border-radius: 26px; padding: 15px 17px 17px;
+           color: var(--ink); background: color-mix(in srgb, var(--paper) 86%, transparent);
+           backdrop-filter: blur(16px) saturate(140%); box-shadow: 0 20px 50px -20px rgba(0,0,0,.75); }
+  .grip { width: 38px; height: 4px; border-radius: 2px; background: rgba(20,24,40,.25); margin: 0 auto 12px; }
+  .row { display: grid; grid-template-columns: 50px 1fr; gap: 12px; align-items: center; }
+  .thumb { width: 50px; height: 35px; border-radius: 2px; background-size: cover; background-position: center; }
+  .lbl { font-family: var(--label); font-weight: 700; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--red); }
+  .t1 { font-family: var(--display); font-size: 21px; line-height: 1.1; margin-top: 3px; }
+  .t2 { font-family: var(--text); font-size: 15px; line-height: 1.3; opacity: .72; }
+  .btn { display: block; width: 100%; margin-top: 13px; padding: 14px 16px 12px; border: 0; border-radius: 999px;
+         font-family: var(--label); font-weight: 700; font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase;
+         background: var(--gold); color: var(--ink); }
+  .q { margin-top: 12px; font-family: var(--text); font-size: 16px; font-style: italic; }
+
+  h2 { font-family: var(--display); font-weight: 400; font-size: 25px; margin: 22px 0 2px; color: var(--gold-soft); }
+  .id { font-family: var(--label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #79809a; }
+  .swatches { display: flex; gap: 6px; margin: 14px 0 12px; }
+  .sw { flex: 1; height: 44px; border-radius: 5px; position: relative; }
+  .sw span { position: absolute; left: 0; right: 0; bottom: -16px; font-size: 8.5px; letter-spacing: .06em; color: #79809a; text-align: center; }
+  .copy { margin-top: 26px; border-top: 1px solid #1d2131; padding-top: 12px; }
+  .copy div { display: flex; gap: 10px; padding: 3px 0; font-size: 13px; }
+  .copy b { flex: 0 0 96px; font-weight: 400; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #6c7288; padding-top: 3px; }
+  .copy i { font-style: normal; font-family: var(--text); color: #cfcabc; }
+  .parts { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .parts figure { margin: 0; }
+  .parts img { width: 100%; border-radius: 4px; display: block; background: #11141d; }
+  .parts figcaption { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: #6c7288; padding-top: 5px; }
+</style>
+</head>
+<body>
+
+<h1>Theme kit</h1>
+<p class="lede">Same engine, same trip file, different theme folder. Everything below comes out of the theme: the painted art, the palette, the four typefaces, the word for the thing that rises when a question is answered. Both are in the repo as themes, beside lantern-night, which is the look the engine used to have fixed in its source.</p>
+
+<div class="rail">
+
+  <div class="col" style="
+      --display:'Zen Antique', Georgia, serif; --label:'Zen Kaku Gothic New', sans-serif;
+      --text:'Shippori Mincho', Georgia, serif;
+      --night-deep:#0c1526; --night:#16243d; --gold:#f3a24a; --gold-soft:#fae3b5;
+      --ivory:#efe8d2; --paper:#eee7d1; --ink:#16233f; --mist:#7d94ab; --red:#b3342b; --halo:#fae3b5;">
+    <div class="phone">
+      <div class="bg" style="background-image:url('templates/themes/kyoto-woodblock/img/art/sky.jpg')"></div>
+      <div class="wash" style="background:linear-gradient(rgba(12,21,38,.30) 0%, rgba(12,21,38,0) 34%, rgba(12,21,38,.30) 72%)"></div>
+      <div class="moon" style="background-image:url('templates/themes/kyoto-woodblock/img/art/moon.jpg')"></div>
+      <div class="rise" style="background-image:url('templates/themes/kyoto-woodblock/img/art/crane.png'); width:52px; height:68px; right:44px; top:150px; filter:drop-shadow(0 0 13px rgba(243,162,74,.6))"></div>
+      <div class="rise" style="background-image:url('templates/themes/kyoto-woodblock/img/art/crane.png'); width:34px; height:44px; right:118px; top:262px; opacity:.85; filter:drop-shadow(0 0 10px rgba(243,162,74,.5))"></div>
+      <div class="rise" style="background-image:url('templates/themes/kyoto-woodblock/img/art/crane.png'); width:26px; height:34px; left:126px; top:352px; opacity:.7; filter:drop-shadow(0 0 8px rgba(243,162,74,.45))"></div>
+      <div class="top">
+        <div class="brand">The Paper Road</div>
+        <div class="when">Day two<br>Kyoto</div>
+      </div>
+      <div class="count">Three of nine opened</div>
+      <div class="sheet">
+        <div class="grip"></div>
+        <div class="row">
+          <div class="thumb" style="background-image:url('templates/themes/kyoto-woodblock/img/art/envelope_t.jpg')"></div>
+          <div>
+            <div class="lbl">Opens at six</div>
+            <div class="t1">Fushimi Inari</div>
+            <div class="t2">Ten thousand gates up the hill, and nobody on them after dark.</div>
+          </div>
+        </div>
+        <div class="q">Who would you want walking up there beside you?</div>
+        <button class="btn">Send it up as a crane</button>
+      </div>
+    </div>
+
+    <h2>Kyoto woodblock</h2>
+    <div class="id">kyoto-woodblock &nbsp;·&nbsp; the answer rises as a paper crane</div>
+    <div class="swatches">
+      <div class="sw" style="background:#0c1526"><span>night</span></div>
+      <div class="sw" style="background:#16243d"><span>deep</span></div>
+      <div class="sw" style="background:#f3a24a"><span>gold</span></div>
+      <div class="sw" style="background:#fae3b5"><span>soft</span></div>
+      <div class="sw" style="background:#b3342b"><span>red</span></div>
+      <div class="sw" style="background:#7d94ab"><span>mist</span></div>
+      <div class="sw" style="background:#eee7d1"><span>paper</span></div>
+    </div>
+    <div class="copy">
+      <div><b>Display</b><i>Zen Antique</i></div>
+      <div><b>Text</b><i>Shippori Mincho</i></div>
+      <div><b>Send</b><i>Send it up as a crane</i></div>
+      <div><b>Sent</b><i>It is a crane in your sky</i></div>
+      <div><b>Back</b><i>Back to your sky</i></div>
+    </div>
+    <div class="parts">
+      <figure><img src="templates/themes/kyoto-woodblock/img/art/envelope.jpg" alt=""><figcaption>Envelope</figcaption></figure>
+      <figure><img src="templates/themes/kyoto-woodblock/img/art/liner.jpg" alt=""><figcaption>Liner</figcaption></figure>
+      <figure><img src="templates/themes/kyoto-woodblock/img/art/moon.jpg" alt=""><figcaption>Moon</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="col" style="
+      --display:'Bebas Neue', Impact, sans-serif; --label:'Oswald', sans-serif;
+      --text:'Libre Baskerville', Georgia, serif;
+      --night-deep:#0b1223; --night:#17213c; --gold:#cc662c; --gold-soft:#f2eccc;
+      --ivory:#efe8d2; --paper:#eee7d1; --ink:#122242; --mist:#8c7aa0; --red:#c4552f; --halo:#f2eccc;">
+    <div class="phone">
+      <div class="bg" style="background-image:url('templates/themes/canyon-ember/img/art/sky.jpg')"></div>
+      <div class="wash" style="background:linear-gradient(rgba(11,18,35,.28) 0%, rgba(11,18,35,0) 34%, rgba(11,18,35,.34) 72%)"></div>
+      <div class="moon" style="background-image:url('templates/themes/canyon-ember/img/art/moon.jpg')"></div>
+      <div class="rise" style="background-image:url('templates/themes/canyon-ember/img/art/ember.png'); width:46px; height:60px; right:48px; top:152px; filter:drop-shadow(0 0 14px rgba(204,102,44,.7))"></div>
+      <div class="rise" style="background-image:url('templates/themes/canyon-ember/img/art/ember.png'); width:30px; height:39px; right:124px; top:268px; opacity:.85; filter:drop-shadow(0 0 10px rgba(204,102,44,.6))"></div>
+      <div class="rise" style="background-image:url('templates/themes/canyon-ember/img/art/ember.png'); width:23px; height:30px; left:130px; top:356px; opacity:.7; filter:drop-shadow(0 0 8px rgba(204,102,44,.5))"></div>
+      <div class="top">
+        <div class="brand">The Long Way Round</div>
+        <div class="when">Day four<br>North rim</div>
+      </div>
+      <div class="count">Three of nine opened</div>
+      <div class="sheet">
+        <div class="grip"></div>
+        <div class="row">
+          <div class="thumb" style="background-image:url('templates/themes/canyon-ember/img/art/envelope_t.jpg')"></div>
+          <div>
+            <div class="lbl">Opens when you arrive</div>
+            <div class="t1">Bright Angel Point</div>
+            <div class="t2">Eighteen hundred metres up, and the rim goes quiet at dusk.</div>
+          </div>
+        </div>
+        <div class="q">What did you think you would feel up here?</div>
+        <button class="btn">Send it up as an ember</button>
+      </div>
+    </div>
+
+    <h2>Canyon ember</h2>
+    <div class="id">canyon-ember &nbsp;·&nbsp; the answer rises as an ember</div>
+    <div class="swatches">
+      <div class="sw" style="background:#0b1223"><span>night</span></div>
+      <div class="sw" style="background:#17213c"><span>deep</span></div>
+      <div class="sw" style="background:#cc662c"><span>gold</span></div>
+      <div class="sw" style="background:#f2eccc"><span>soft</span></div>
+      <div class="sw" style="background:#c4552f"><span>red</span></div>
+      <div class="sw" style="background:#8c7aa0"><span>mist</span></div>
+      <div class="sw" style="background:#eee7d1"><span>paper</span></div>
+    </div>
+    <div class="copy">
+      <div><b>Display</b><i>Bebas Neue</i></div>
+      <div><b>Text</b><i>Libre Baskerville</i></div>
+      <div><b>Send</b><i>Send it up as an ember</i></div>
+      <div><b>Sent</b><i>It is an ember in your sky</i></div>
+      <div><b>Back</b><i>Back to your sky</i></div>
+    </div>
+    <div class="parts">
+      <figure><img src="templates/themes/canyon-ember/img/art/envelope.jpg" alt=""><figcaption>Envelope</figcaption></figure>
+      <figure><img src="templates/themes/canyon-ember/img/art/liner.jpg" alt=""><figcaption>Liner</figcaption></figure>
+      <figure><img src="templates/themes/canyon-ember/img/art/moon.jpg" alt=""><figcaption>Moon</figcaption></figure>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

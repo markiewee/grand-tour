@@ -1,5 +1,5 @@
 // Keeps the whole journey on the phone, so envelopes still open where there is no signal.
-// tools/make_precache.py writes precache.json and bumps the version below whenever files change.
+// `adventure journey build` writes precache.json and bumps the version below whenever files change.
 const V = 'ga-42ff3596eb59';
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {

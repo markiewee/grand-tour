@@ -17,6 +17,8 @@ import unicodedata
 import zoneinfo
 from pathlib import Path
 
+from PIL import Image
+
 # api/events.js turns away any other shape of id, so a stop it cannot post is a stop that opens
 # without the sender ever knowing it did.
 ID = re.compile(r"^[a-z0-9]{1,24}$")
@@ -162,7 +164,59 @@ def check(app):
     times = sorted(filter(None, (_moment(stop.get("opensAt")) for stop in stops)))
     if times and (times[-1] - times[0]).days > 30:
         warnings.append("more than 30 days between the first and last stop")
+
+    errors.extend(_theme_errors(app))
     return {"errors": errors, "warnings": warnings}
+
+
+def _theme_errors(app):
+    """What a theme can be wrong about once it is inside an app.
+
+    All four of these are silent in a browser. A missing picture draws nothing, a missing word
+    prints its own key, a picture of the wrong size is stretched, and pale text on a pale sky is
+    still there, just unreadable. So they are errors rather than warnings.
+    """
+    from . import theme as theme_mod
+    found = []
+
+    art = app / "public" / "img" / "art"
+    for name, (want_w, want_h) in theme_mod.ART.items():
+        path = art / name
+        if not path.exists():
+            found.append(f"the theme art is missing {name}")
+            continue
+        with Image.open(path) as im:
+            if im.size != (want_w, want_h):
+                found.append(f"{name} is {im.size[0]}x{im.size[1]}, the engine draws it at "
+                             f"{want_w}x{want_h}")
+
+    theme_file = app / "public" / "data" / "theme.json"
+    if not theme_file.exists():
+        found.append("there is no public/data/theme.json; run `journey retheme` to write one")
+    else:
+        with open(theme_file, encoding="utf-8") as fh:
+            words = json.load(fh).get("copy", {})
+        for key in theme_mod.base_copy():
+            line = words.get(key)
+            if not line:
+                found.append(f"the theme has no word for {key}")
+            elif theme_mod.ANY_BRACE.search(line):
+                found.append(f"the theme's word for {key} still says "
+                             f"{theme_mod.ANY_BRACE.search(line).group(0)}")
+
+    css_file = app / "public" / "css" / "theme.css"
+    if not css_file.exists():
+        found.append("there is no public/css/theme.css, so the app has no palette and no "
+                     "typefaces; run `journey retheme` to write one")
+    else:
+        tokens = dict(re.findall(r"--([a-z-]+): *(#[0-9a-fA-F]{6});",
+                                 css_file.read_text(encoding="utf-8")))
+        if "ivory" in tokens and "night" in tokens:
+            ratio = theme_mod.contrast(tokens["ivory"], tokens["night"])
+            if ratio < 4.5:
+                found.append(f"contrast of ivory on night is {ratio}:1, under the 4.5:1 that "
+                             "keeps body text readable")
+    return found
 
 
 def build(app):
@@ -327,12 +381,17 @@ def _stamp(app, files):
     return version
 
 
-def new(template, dest, trip=None, midnight=None):
-    """Copy the engine to a new app. With a planning trip file it also drafts the stops, leaving
-    every line of writing empty: the dates and the places can be worked out, the words cannot."""
+def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
+    """Copy the engine to a new app and dress it in a theme. With a planning trip file it also
+    drafts the stops, leaving every line of writing empty: the dates and the places can be worked
+    out, the words cannot."""
+    from . import theme as theme_mod
     template, dest = Path(template).resolve(), Path(dest)
     if dest.exists() and any(dest.iterdir()):
         raise FileExistsError(f"{dest} already has something in it")
+    # Before the engine is copied, not after: a theme that turns out to be short of a picture
+    # halfway through leaves a directory new() will refuse to write to a second time.
+    theme_mod.check_art(theme_name)
 
     def leave_out(directory, names):
         here = Path(directory).resolve()
@@ -346,10 +405,56 @@ def new(template, dest, trip=None, midnight=None):
         return out
 
     shutil.copytree(template, dest, ignore=leave_out, dirs_exist_ok=True)
+    theme_mod.apply_to(dest, theme_name)
     if trip:
         with open(trip, encoding="utf-8") as fh:
             _write(dest, _draft(json.load(fh), midnight))
     return dest
+
+
+# What a traveller has done lives on their phone and in the app's own file store, neither of
+# which this command can see. The rehearsal server's log is the one piece of evidence that is on
+# disk, so it is what the refusal can actually stand on.
+TRAVELLED = "data/events.json"
+
+CAUTION = ("retheme cannot see the traveller's phone. If they have started, their answers were "
+           "written under the old theme's noun and will read oddly under the new one.")
+
+
+def travelled(app):
+    """When the journey was last opened or answered, as far as anything on disk knows."""
+    log = Path(app) / TRAVELLED
+    if not log.exists():
+        return []
+    try:
+        with open(log, encoding="utf-8") as fh:
+            events = json.load(fh)
+    except (json.JSONDecodeError, OSError):
+        return []
+    return events if isinstance(events, list) else []
+
+
+def retheme(app, theme_name, force=False):
+    """Dress an existing app in a different theme.
+
+    A traveller's own sent answer was written under one noun and reading it back under another
+    puts words in their mouth, so a journey that has visibly begun is left alone unless the
+    sender insists. The evidence is only ever partial, so the caution goes out either way.
+    """
+    from . import theme as theme_mod
+    app = Path(app)
+    seen = travelled(app)
+    if seen and not force:
+        raise ValueError(f"this journey has been opened {len(seen)} times already. Retheming it "
+                         f"would rewrite words the traveller has read. Pass --force if you mean "
+                         f"it. {CAUTION}")
+    name = theme_mod.apply_to(app, theme_name)["name"]
+    # A phone that has already installed the journey serves its art from the cache, and the cache
+    # is only rebuilt when its name changes. Without this the new theme is on the server and the
+    # old one is still on the phone.
+    version = _stamp(app, _precache(app))
+    return {"app": str(app), "theme": name, "cache": version,
+            "caution": CAUTION, "opened": len(seen)}
 
 
 def _time(value):

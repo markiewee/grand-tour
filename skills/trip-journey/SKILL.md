@@ -1,6 +1,6 @@
 ---
 name: trip-journey
-description: Use when someone wants a trip delivered as an interactive journey rather than a printed guide, or asks for a sealed app, an envelope app, a surprise trip app or a keepsake the traveller unlocks as they go. Builds a web app from the trip file where each stop stays sealed until its time or until the traveller is standing there, with posters that print, questions that become paper lanterns, an optional letterbox of letters from friends, and a book at the end. Rehearses the whole journey in a headless phone and hands over a deploy command.
+description: Use when someone wants a trip delivered as an interactive journey rather than a printed guide, or asks for a sealed app, an envelope app, a surprise trip app or a keepsake the traveller unlocks as they go. Builds a web app from the trip file where each stop stays sealed until its time or until the traveller is standing there, with posters that print, questions that rise into the sky as whatever the theme makes them, an optional letterbox of letters from friends, and a book at the end. Rehearses the whole journey in a headless phone and hands over a deploy command.
 ---
 
 # Trip journey
@@ -23,9 +23,18 @@ The plugin root is two folders up from this skill's base directory. Run:
    that matters more than the others, such as a birthday. Do not assume there is one. A journey
    with no such moment has no midnight screen and no letterbox, and is simpler for it.
 
-2. **Scaffold.** `adventure journey new trips/<id>/app --trip trips/<id>/trip.json`
-   This copies the engine and drafts one stop per activity and per outbound flight, with the copy
-   left empty. It never overwrites an existing directory.
+2. **Pick a theme, then scaffold.**
+   `adventure journey new trips/<id>/app --trip trips/<id>/trip.json --theme <name>`
+   Three themes ship: `lantern-night`, `kyoto-woodblock` and `canyon-ember`. Show the traveller's
+   friend the three and let them pick, or make a new one with `adventure theme new <name>`, which
+   writes the folder and the brief for its five images. A theme decides the painted art, the
+   colours, the four typefaces and the words, including the noun for the thing that rises when a
+   question is answered. It decides nothing about how the journey works.
+
+   Scaffolding copies the engine and drafts one stop per activity and per outbound flight, with
+   the copy left empty. It never overwrites an existing directory. To change the theme later:
+   `adventure journey retheme trips/<id>/app --theme <name>`, which refuses once the traveller has
+   answered anything, because their own words were written under one noun.
 
 3. **Write the journey block.** Open `trips/<id>/app/public/data/trip.json` and fill in `title`,
    `for`, `from`, `subtitle`, `opening`, `tz` and `tzCity`. Add `midnight`, `callback` and
@@ -35,13 +44,15 @@ The plugin root is two folders up from this skill's base directory. Run:
    - `lede`, about 45 words, three sentences: what the place is, one checked fact from
      `trip-research` with a date or a number in it, and why this stop is in the journey.
    - `question` on about half of them. Open, personal, answerable in one line, never yes or no.
-     The answer rises into the sky as a paper lantern and comes back on the callback date.
+     The answer rises into the sky as a lantern, a crane or an ember, whichever the theme
+     chose, and comes back on the callback date.
    - `caption`, one sentence about the poster, as if printed on its back.
    - `geo` with `lat`, `lng` and `r` in metres: 200 for a restaurant or a bar, 300 to 500 for a
      temple or a park, 400 for an airport terminal. Without it the envelope opens on time only.
    - `sources`, one or two URLs that actually support the fact in the lede.
 
-5. **Posters.** Make them with `trip-guide`. Write the concept from the place, not from the
+5. **Posters.** Make them with `trip-guide`, passing the same `--theme` so the posters and the
+   app match. Write the concept from the place, not from the
    caption: a caption describes the picture to the person reading it, and a generator given only
    that draws the right composition in the wrong country. Then cut each one for the phone:
    `adventure plates trips/<id>/art/final/<stop>.jpg --out trips/<id>/app/public/img`

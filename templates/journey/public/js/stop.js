@@ -1,11 +1,22 @@
 // Inside the envelope: the poster prints plate by plate, then three lines on the place, the note
-// (hold to read), and at about half the stops a question whose answer goes up as a lantern.
+// (hold to read), and at about half the stops a question whose answer goes up into the sky.
 import { sfx, audio } from './audio.js';
+import { t } from './copy.js';
 
 const gsap = window.gsap;
 const $ = (s) => document.querySelector(s);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PLATES = ['mist', 'jade', 'gold', 'red', 'ink'];
+// GSAP tweens colour by parsing it, and it cannot parse a var() or a color-mix(), so the theme's
+// own value is read off a throwaway element and handed over as plain rgb().
+function themeColor(css) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;color:${css}`;
+  document.body.appendChild(probe);
+  const out = getComputedStyle(probe).color;
+  probe.remove();
+  return out;
+}
 let current = null, handlers = {}, printTl = null;
 
 export function setupStop(h) {
@@ -13,7 +24,7 @@ export function setupStop(h) {
   $('#sendBtn').addEventListener('click', send);
   $('#doneBtn').addEventListener('click', () => handlers.onDone(current));
   $('#stopBack').addEventListener('click', () => handlers.onDone(current));
-  $('#answer').addEventListener('input', () => { $('#answer').placeholder = 'Write it here…'; });
+  $('#answer').addEventListener('input', () => { $('#answer').placeholder = t('answerPlaceholder'); });
 }
 
 export function renderStop(stop, ctx) {
@@ -41,7 +52,7 @@ export function renderStop(stop, ctx) {
   $('#qAnswer').textContent = answer || '';
   $('#answer').value = '';
   const pending = stop.question && !answer;
-  $('#doneBtn').textContent = pending ? 'Answer it later' : 'Back to your sky';
+  $('#doneBtn').textContent = pending ? t('answerLater') : t('back');
   $('#doneBtn').className = pending ? 'btn quiet' : 'btn';
   if (ctx.animate) printPoster(); else showPrinted();
 }
@@ -50,7 +61,7 @@ function showPrinted() {
   $('#finalPoster').style.opacity = 1;
   document.querySelectorAll('#press img[data-plate]').forEach((im) => { im.style.opacity = 0; });
   document.querySelectorAll('#chips .chip').forEach((c) => { c.style.opacity = 1; c.style.transform = 'scale(1)'; });
-  $('#plateLbl').textContent = 'Printed';
+  $('#plateLbl').textContent = t('printed');
   document.querySelectorAll('#stop .reveal').forEach((r) => { r.style.opacity = 1; r.style.transform = 'none'; });
 }
 
@@ -68,16 +79,16 @@ export function printPoster() {
       .to(chips[i], { opacity: 1, scale: 1, duration: .3, ease: 'back.out(3)' }, at);
   });
   tl.to('#finalPoster', { opacity: 1, duration: .9, ease: 'power2.inOut' }, plates.length * .62 + .15)
-    .add(() => { lbl.textContent = 'Printed'; }, plates.length * .62 + .15)
+    .add(() => { lbl.textContent = t('printed'); }, plates.length * .62 + .15)
     .to('#stop .reveal', { opacity: 1, y: 0, duration: .7, stagger: .09, ease: 'power3.out' }, plates.length * .62 + .5);
 }
 export function finishPrinting() { if (printTl) printTl.progress(1); }
 
-// the question card folds into a lantern and floats off into the sky
+// the question card folds up and floats off into the sky
 function send() {
   const text = $('#answer').value.trim();
   if (!text) {
-    $('#answer').placeholder = 'Write a few words first';
+    $('#answer').placeholder = t('answerFirst');
     gsap.fromTo('#answer', { x: 0 }, { x: 6, duration: .06, yoyo: true, repeat: 5, onComplete: () => gsap.set('#answer', { x: 0 }) });
     return;
   }
@@ -90,7 +101,7 @@ function send() {
   if (reduced) { handlers.onFlown(stop); return; }
   const tl = gsap.timeline();
   tl.to('#q > *', { opacity: 0, duration: .25 })
-    .to(q, { width: 44, height: 56, x: (r.width - 44) / 2, borderRadius: '46% 46% 48% 48%', background: '#e98b3a', boxShadow: '0 0 40px 14px rgba(255,170,80,.6)', duration: .6, ease: 'power3.inOut' }, .15)
+    .to(q, { width: 44, height: 56, x: (r.width - 44) / 2, borderRadius: '46% 46% 48% 48%', background: themeColor('var(--gold)'), boxShadow: `0 0 40px 14px ${themeColor('color-mix(in srgb, var(--gold) 60%, transparent)')}`, duration: .6, ease: 'power3.inOut' }, .15)
     .add(() => { gsap.set(fly, { left: cx, top: cy - r.height / 2 + 28, opacity: 1, x: 0, scale: 1 }); q.style.visibility = 'hidden'; sfx.chime(); }, .78)
     .add(() => handlers.onLeaving(stop), .8)
     .to(fly, { top: d.height * .2, left: d.width * .5, scale: .45, duration: 3.0, ease: 'power1.inOut' }, 1.3)

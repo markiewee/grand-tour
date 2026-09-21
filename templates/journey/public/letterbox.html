@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e1430">
+<meta name="theme-color" content="#121a33">
 <meta name="robots" content="noindex, nofollow">
 <!-- ga:meta -->
 <title>A letterbox for Ren</title>
@@ -16,29 +16,34 @@
 <link rel="icon" href="img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poiret+One&family=Josefin+Sans:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<script>
+  /* The browser chrome cannot read a var(), so the theme's night is copied into the meta tag
+     once the stylesheet above has loaded. The literal in the tag is only the first paint. */
+  { const n = getComputedStyle(document.documentElement).getPropertyValue('--night').trim();
+    if (n) document.querySelector('meta[name="theme-color"]').content = n; }
+</script>
 <style>
-  :root { --night: #0e1430; --gold: #d6a13f; --gold-soft: #f0cf86; --red: #b3342b; --jade: #2e6a5c; --ivory: #f2e7cf; --paper: #efe3c6; --mist: #a4bcb8; --ink: #1b2340; --ink-soft: #3b4054;
-          --display: "Limelight", "Didot", Georgia, serif; --label: "Josefin Sans", "Futura", "Avenir Next", sans-serif; --text: "Cormorant Garamond", Georgia, serif; }
+  /* The colours and the typefaces all come from the theme, in css/theme.css. */
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; background: var(--night); color: var(--ink); font-family: var(--text); font-size: 18px; }
   body { padding: calc(env(safe-area-inset-top, 0px) + 22px) 16px calc(env(safe-area-inset-bottom, 0px) + 36px);
-         background: radial-gradient(70% 40% at 50% 0%, rgba(240,207,134,.16), rgba(14,20,48,0) 70%), var(--night); }
+         background: radial-gradient(70% 40% at 50% 0%, color-mix(in srgb, var(--gold-soft) 16%, transparent), transparent 70%), var(--night); }
   button, input, textarea { font: inherit; color: inherit; }
   .sheet { max-width: 520px; margin: 0 auto; background: var(--paper); border-radius: 6px; padding: 26px 20px 22px; box-shadow: inset 0 0 0 7px var(--paper), inset 0 0 0 8.5px var(--gold), 0 24px 50px -24px rgba(0,0,0,.8); }
-  .lamp { width: 44px; height: 57px; margin: -6px auto 8px; background: url(img/art/lantern.png) center / contain no-repeat; filter: drop-shadow(0 0 14px rgba(255,170,80,.45)); }
+  .lamp { width: 44px; height: 57px; margin: -6px auto 8px; background: url(img/art/rise.png) center / contain no-repeat; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--gold) 45%, transparent)); }
   .lbl { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; }
   h1 { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.02; margin: 8px 0 12px; text-align: center; text-wrap: balance; }
   .intro { margin: 0 0 20px; text-align: center; color: var(--ink-soft); line-height: 1.35; text-wrap: pretty; }
   label.f { display: block; margin: 16px 0 6px; }
-  input[type=text], textarea { width: 100%; border-radius: 12px; border: 1px solid rgba(27,35,64,.2); background: #f7efdc; padding: 11px 12px; font-size: 18px; outline: none; }
+  input[type=text], textarea { width: 100%; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); background: color-mix(in srgb, var(--paper) 60%, white); padding: 11px 12px; font-size: 18px; outline: none; }
   textarea { min-height: 160px; font-style: italic; line-height: 1.35; resize: vertical; }
-  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(214,161,63,.2); }
+  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 20%, transparent); }
   .media { display: grid; gap: 10px; margin-top: 16px; }
-  .mbox { border-radius: 14px; background: rgba(27,35,64,.06); padding: 12px 14px; display: grid; gap: 8px; }
+  .mbox { border-radius: 14px; background: color-mix(in srgb, var(--ink) 6%, transparent); padding: 12px 14px; display: grid; gap: 8px; }
   .mrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px 9px; border-radius: 999px; border: 0; cursor: pointer; font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; background: var(--ink); color: var(--gold-soft); }
-  .btn.ghost { background: rgba(27,35,64,.08); color: var(--ink); }
+  .btn.ghost { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); }
   .btn.rec { background: var(--red); color: #fff; }
   .btn:disabled { opacity: .45; cursor: default; }
   .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -51,7 +56,7 @@
   .send { width: 100%; justify-content: center; margin-top: 22px; padding: 15px 16px 13px; font-size: 11.5px; background: var(--gold); color: var(--ink); }
   .secret { text-align: center; margin: 14px 0 0; font-family: var(--label); font-weight: 700; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); }
   .err { color: var(--red); font-style: italic; margin: 10px 0 0; min-height: 1em; }
-  .bar { height: 4px; border-radius: 2px; background: rgba(27,35,64,.1); overflow: hidden; margin-top: 12px; }
+  .bar { height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; margin-top: 12px; }
   .bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .2s; }
   .done { text-align: center; padding: 10px 0 4px; }
   .done h1 { margin-top: 4px; }

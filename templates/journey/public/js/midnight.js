@@ -1,10 +1,12 @@
-// Midnight. A lantern comes down for every letter in the letterbox, and the sender's comes last.
+// Midnight. One comes down for every letter in the letterbox, and the sender's comes last.
 // The traveller taps one to read it, hear it or watch it.
 //
 // However many letters arrive, they all have to land on one phone screen. The grid used to be four
 // across and simply added rows below the screen: at fifty letters, thirty five of them were out of
 // reach and the last one landed fifty seconds in. layout() below fits the count to the space.
 import { openMemo } from './memo.js';
+import { journey } from './trip.js';
+import { rise, t } from './copy.js';
 import { sfx } from './audio.js';
 
 const gsap = window.gsap;
@@ -15,7 +17,7 @@ export function setupMidnight(h) {
   $('#midDone').addEventListener('click', () => h.onDone());
 }
 
-// Fit however many lanterns there are into the band under the words, above the button. Returns the
+// Fit however many there are into the band under the words, above the button. Returns the
 // grid, how far to shrink each one, whether their names still fit, and how fast to drop them.
 function layout(others, d) {
   const TOP = .575, BOT = .78;                  // the first and last row of everybody else
@@ -41,7 +43,7 @@ function layout(others, d) {
     names: ((best.right - best.left) / Math.max(best.cols - 1, 1)) * d.width >= 66 && scale >= .8,
     // the sender's hangs alone under everyone else, never among them
     lastY: Math.min(.87, Math.max(LAST, bottomRow + .075)),
-    // every lantern is down inside about eight seconds, however many there are
+    // every one of them is down inside about eight seconds, however many there are
     step: others > 1 ? Math.min(.9, 7.5 / (others - 1)) : .9,
   };
 }
@@ -50,7 +52,7 @@ export function showMidnight(letters, j) {
   const falls = $('#falls'); falls.innerHTML = '';
   if (j && j.midnight && j.midnight.title) $('#midTitle').textContent = j.midnight.title;
   $('#midSub').textContent = letters.length
-    ? `${letters.length === 1 ? 'One letter' : `${letters.length} letters`} came down with the moon. Tap a lantern to open it.`
+    ? `${letters.length === 1 ? 'One letter' : `${letters.length} letters`} came down with the moon. Tap ${rise().a} to open it.`
     : 'The letters are still on their way. Come back to this envelope in a little while.';
   sfx.bell();
   const d = $('#device').getBoundingClientRect();
@@ -74,7 +76,7 @@ export function showMidnight(letters, j) {
     else {
       const row = Math.floor(k / plan.cols), idx = k % plan.cols;
       const inRow = Math.min(plan.cols, others - row * plan.cols);
-      // Every row uses the same spacing and a short last row is centred. Stretching three lanterns
+      // Every row uses the same spacing and a short last row is centred. Stretching three of them
       // across the width of four put the last one of each row in the same column, so they landed
       // on top of each other at the right hand edge.
       const step = plan.cols > 1 ? (plan.right - plan.left) / (plan.cols - 1) : 0;
@@ -95,8 +97,11 @@ export function showMidnight(letters, j) {
       const r = el.getBoundingClientRect();
       openMemo({
         // The label and the title must not both be the name, which read as "From Sam / Sam".
-        when: l.last ? `From ${l.from}` : 'A letter', title: l.last ? 'Happy birthday' : l.from,
-        a: l.text, audio: l.audio, video: l.video, hint: 'Tap outside to put it back',
+        // The last letter's title is the journey's own, because not every journey has a birthday
+        // in it and the engine has no business assuming one.
+        when: l.last ? `From ${l.from}` : t('aLetter'),
+        title: l.last ? ((journey().midnight || {}).letterTitle || t('lastLetter')) : l.from,
+        a: l.text, audio: l.audio, video: l.video, hint: t('putItBack'),
       }, { x: r.left - d.left + r.width / 2, y: r.top - d.top + 28 });
     });
   });
