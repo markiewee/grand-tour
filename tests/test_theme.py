@@ -58,3 +58,17 @@ def test_an_unfilled_placeholder_is_an_error(tmp_path):
     d = a_theme(tmp_path, copy={"start": "Open the first {box}"})
     with pytest.raises(ValueError, match="box"):
         theme.copy_for(theme.load(d))
+
+
+def test_css_carries_every_token_and_the_fonts(tmp_path):
+    css = theme.css(theme.load(a_theme(tmp_path)))
+    for token in theme.TOKENS:
+        assert f"--{token}: #112233;" in css
+    assert '--display: "Zen Antique"' in css
+    assert "fonts.googleapis.com/css2?family=Zen+Antique" in css
+    assert css.startswith("/*")
+
+
+def test_contrast_of_ivory_on_night(tmp_path):
+    assert theme.contrast("#ffffff", "#000000") == 21
+    assert theme.contrast("#f2e7cf", "#121a33") > 4.5

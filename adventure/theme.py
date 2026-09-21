@@ -85,3 +85,38 @@ def copy_for(loaded):
             raise ValueError(f"{loaded['name']}: copy.{key} has nothing to put in {left.group(0)}")
         out[key] = filled
     return out
+
+
+CSS = """\
+/* Written by `python3 -m adventure journey new` or `journey retheme`. Do not edit by hand:
+   any change here is overwritten the next time the theme is applied. The theme is {name}. */
+@import url("https://fonts.googleapis.com/css2?{query}&display=swap");
+:root {{
+{tokens}
+{families}
+}}
+"""
+
+
+def css(loaded):
+    tokens = "\n".join(f"  --{k}: {loaded['palette'][k]};" for k in TOKENS)
+    families = "\n".join(f'  --{k}: {loaded["fonts"][k]};' for k in FONTS)
+    return CSS.format(name=loaded["name"], query=loaded["fonts"].get("query", ""),
+                      tokens=tokens, families=families)
+
+
+def _channel(value):
+    v = int(value, 16) / 255
+    return v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+
+
+def _luminance(colour):
+    r, g, b = (_channel(colour[i:i + 2]) for i in (1, 3, 5))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(front, back):
+    """WCAG contrast ratio, rounded the way the check reports it."""
+    a, b = _luminance(front), _luminance(back)
+    lo, hi = sorted((a, b))
+    return round((hi + 0.05) / (lo + 0.05), 2)
