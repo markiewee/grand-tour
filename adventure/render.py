@@ -34,10 +34,15 @@ def row_html(row):
         det=html.escape(row.get("detail", "")), tag=tag)
 
 
-def render_day(day, template_path, out_path):
+def render_day(day, template_path, out_path, theme=None):
+    """Fill one day's page. The theme is written into the page rather than linked, so a guide
+    printed to PDF carries its own colours and does not depend on a stylesheet beside it."""
+    from . import theme as theme_mod
+    loaded = theme if theme is not None else theme_mod.load("lantern-night")
     with open(template_path, encoding="utf-8") as fh:
         template = string.Template(fh.read())
     page = template.substitute(
+        theme_css=theme_mod.css(loaded),
         title=html.escape(day["title"]), day_number=str(day["number"]), date=html.escape(day["date"]),
         poster=html.escape(day["poster"]), poster_alt=html.escape(day.get("poster_alt", "")),
         caption=html.escape(day.get("caption", "")), history=html.escape(day.get("history", "")),

@@ -1,12 +1,5 @@
-/* The Great Adventure A4 guide pages. Colours come from the house style; swap the :root values to restyle. */
-:root {
-    --red: #b3342b; --green: #2e6a5c; --gold: #d6a13f; --ivory: #f2e7cf;
-    --ink: #1b2340; --mist: #a4bcb8; --paper: #efe3c6; --ink-2: #4b4f5c;
-    --display: "Limelight", "Poiret One", Georgia, serif;
-    --deco: "Poiret One", "Josefin Sans", sans-serif;
-    --label: "Josefin Sans", "Futura", "Avenir Next", sans-serif;
-    --text: "Cormorant Garamond", Georgia, serif;
-  }
+/* The Great Adventure A4 guide pages. The colours and the typefaces come from the theme,
+   written into the page itself by render_day, so the guide and the app cannot drift apart. */
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #555; }
@@ -45,7 +38,7 @@
   .inner { padding: 19mm 14mm 18mm; }
   .chap { display: flex; align-items: baseline; gap: 5mm; margin: 0 0 5mm; }
   .chap h2 { font-family: var(--display); font-weight: 400; font-size: 30pt; line-height: 1; margin: 0; letter-spacing: .02em; }
-  .chap .en { font-family: var(--deco); font-size: 13pt; color: var(--ink-2); }
+  .chap .en { font-family: var(--deco); font-size: 13pt; color: var(--ink-soft); }
   .chap .hours { margin-left: auto; font-family: var(--label); font-size: 8pt; letter-spacing: .24em; text-transform: uppercase; color: var(--red); font-weight: 700; }
 
   .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -58,18 +51,18 @@
   .row .det { font-size: 10.5pt; line-height: 1.3; margin-top: .6mm; }
   .ref { font-family: var(--label); font-size: 8pt; letter-spacing: .08em; background: rgba(214,161,63,.25); padding: 0 1mm; white-space: nowrap; }
   .tag { font-family: var(--label); font-weight: 700; font-size: 6.5pt; letter-spacing: .2em; text-transform: uppercase; border: .45mm solid currentColor; padding: .8mm 1.6mm .5mm; transform: rotate(-3deg); display: inline-block; white-space: nowrap; margin-top: .8mm; }
-  .tag.ok { color: var(--green); } .tag.idea { color: #9a6d17; } .tag.pick { color: var(--red); }
+  .tag.ok { color: var(--jade); } .tag.idea { color: #9a6d17; } .tag.pick { color: var(--red); }
 
   .hist { border-left: 1.2mm solid var(--gold); padding: 1mm 0 1mm 4mm; font-style: italic; font-size: 10.5pt; line-height: 1.35; }
   .hist b { font-style: normal; font-family: var(--label); font-size: 7pt; letter-spacing: .26em; text-transform: uppercase; display: block; margin-bottom: 1mm; color: var(--red); }
 
   .paste { position: absolute; background: #fff; padding: 1.6mm; box-shadow: 0 .5mm 1.6mm rgba(27,35,64,.35); }
   .paste img { display: block; width: 100%; }
-  .paste .pc { font-family: var(--label); font-size: 5.8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin-top: 1.2mm; line-height: 1.3; }
+  .paste .pc { font-family: var(--label); font-size: 5.8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); margin-top: 1.2mm; line-height: 1.3; }
   .stampimg { position: absolute; box-shadow: 0 .4mm 1.2mm rgba(27,35,64,.4); }
   .logo { position: absolute; }
-  .cap2 { font-family: var(--label); font-size: 6.5pt; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); margin-top: 4.5mm; }
-  .eph-cap { position: absolute; font-family: var(--label); font-size: 6pt; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); }
+  .cap2 { font-family: var(--label); font-size: 6.5pt; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4.5mm; }
+  .eph-cap { position: absolute; font-family: var(--label); font-size: 6pt; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); }
 
   .divider { height: 3mm; margin: 4mm 0; position: relative;
     background: linear-gradient(var(--red), var(--red)) center / 100% .5mm no-repeat; }
