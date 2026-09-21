@@ -63,7 +63,7 @@ ok(!nokey.letters.some((l) => l.from === 'QA test') || !PROD, 'without the key, 
   await page.goto(`${BASE}?jump=midnight&k=${K}&t=${encodeURIComponent(iso(midnightAt + 60e3))}`, { waitUntil: 'load' });
   await page.waitForTimeout(2500);
   const names = await page.$$eval('.fall .who', (els) => els.map((e) => e.textContent));
-  ok(names.includes('QA test'), 'the letter comes down as a lantern at midnight');
+  ok(names.includes('QA test'), 'the letter comes down at midnight');
   await ctx.close();
 }
 

@@ -1,4 +1,4 @@
-// The paper card that opens out of a lantern: one of the answers, or a midnight letter.
+// The paper card that opens out of the sky: one of the answers, or a midnight letter.
 import { sfx, audio } from './audio.js';
 
 const gsap = window.gsap;
@@ -10,7 +10,7 @@ export function setupMemo() {
   $('#memo').addEventListener('click', (e) => { if (e.target.closest('audio, video')) return; closeMemo(); });
 }
 
-// origin: where on screen the card grows from (the lantern it came out of)
+// origin: where on screen the card grows from (the light it came out of)
 export function openMemo(c, origin, closeFn) {
   audio(); sfx.chime(); open = true; onClose = closeFn || null;
   const thumb = $('#memoThumb'); thumb.hidden = !c.thumb; if (c.thumb) thumb.src = c.thumb;

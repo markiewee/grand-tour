@@ -1,6 +1,6 @@
 // Rehearse the whole journey on a phone: open every envelope in order at its time, hold every seal,
-// let every letter unfold and every poster print, answer every question, send every lantern, open
-// the midnight letters and the book, then check the first lantern comes back on the callback date.
+// let every letter unfold and every poster print, answer every question, send every answer up, open
+// the midnight letters and the book, then check the first answer comes back on the callback date.
 //   node qa/rehearse.mjs [outdir]
 import { chromium as loadChromium, CHROME } from './journey.mjs';
 
@@ -41,14 +41,14 @@ async function holdSeal(ms = 1500) {
 }
 
 const answers = {};
-let lanterns = 0;
+let risen = 0;
 // GA_FROM=13 resumes at an envelope, as if every earlier one was opened and answered
 const FROM = parseInt(process.env.GA_FROM || '1', 10);
 if (FROM > 1) {
   const opened = {}, ans = {};
   for (const s of trip.stops.filter((x) => x.n < FROM)) {
     opened[s.id] = Date.parse(s.opensAt) + 60e3;
-    if (s.question) { const a = `Rehearsal answer for ${s.place}.`; ans[s.id] = { text: a, at: opened[s.id] + 60e3 }; answers[s.id] = a; lanterns++; }
+    if (s.question) { const a = `Rehearsal answer for ${s.place}.`; ans[s.id] = { text: a, at: opened[s.id] + 60e3 }; answers[s.id] = a; risen++; }
   }
   await ctx.addInitScript((st) => { try { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('ga_state_rehearse_v1', st); sessionStorage.setItem('seeded', '1'); } } catch (e) {} },
     JSON.stringify({ opened, answers: ans, firstOpen: opened[trip.stops[0].id] }));
@@ -85,8 +85,8 @@ for (const s of trip.stops.filter((x) => x.n >= FROM)) {
     await page.waitForTimeout(6000);
     const n = await page.evaluate(() => document.querySelectorAll('.fall').length);
     const held = (await (await fetch(`${BASE}api/state?t=${Date.parse(t)}`)).json()).letters.length;
-    log(`  midnight lanterns: ${n} (server holds ${held})`);
-    check(n === held, `a lantern for every letter (${n} of ${held})`);
+    log(`  midnight, ${n} came down (server holds ${held})`);
+    check(n === held, `one comes down for every letter (${n} of ${held})`);
     if (!held) check(/on their way/.test(await page.textContent('#midSub')), 'with no letters yet it says they are on their way');
     await shot(`${tag}_3midnight`);
     if (n) {
@@ -132,10 +132,10 @@ for (const s of trip.stops.filter((x) => x.n >= FROM)) {
     await page.fill('#answer', a); answers[s.id] = a;
     await page.click('#sendBtn');
     await page.waitForTimeout(5200);
-    lanterns++;
+    risen++;
     const home = await page.evaluate(() => ({ scene: [...document.querySelectorAll('.scene.on')].map((x) => x.id).join(','), count: document.querySelector('#count').textContent }));
     check(home.scene === 'home', `after sending, back home (${home.scene})`);
-    check(home.count.startsWith(String(lanterns)), `lantern count is ${lanterns} (${home.count})`);
+    check(home.count.startsWith(String(risen)), `the count over the sky is ${risen} (${home.count})`);
     if (s.n === 5 || s.n === 24) await shot(`${tag}_4sent`);
   } else {
     await page.evaluate(() => document.querySelector('#doneBtn').scrollIntoView({ block: 'center' }));
@@ -151,7 +151,7 @@ if (callbackAt) {
   await page.waitForTimeout(3200);
   const back = await page.evaluate(() => ({ open: getComputedStyle(document.querySelector('#memo')).visibility, title: document.querySelector('#memoPlace').textContent, a: document.querySelector('#memoA').textContent }));
   check(back.open === 'visible' && back.title === (J.callback.title || ''),
-    `the first lantern comes back on the callback date (${back.title})`);
+    `the first answer comes back on the callback date (${back.title})`);
   check(back.a === answers[first.id], `it carries the answer from ${first.place}`);
   await shot('90_callback');
   await page.mouse.click(20, 820); await page.waitForTimeout(800);

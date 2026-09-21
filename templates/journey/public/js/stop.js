@@ -1,5 +1,5 @@
 // Inside the envelope: the poster prints plate by plate, then three lines on the place, the note
-// (hold to read), and at about half the stops a question whose answer goes up as a lantern.
+// (hold to read), and at about half the stops a question whose answer goes up into the sky.
 import { sfx, audio } from './audio.js';
 
 const gsap = window.gsap;
@@ -73,7 +73,7 @@ export function printPoster() {
 }
 export function finishPrinting() { if (printTl) printTl.progress(1); }
 
-// the question card folds into a lantern and floats off into the sky
+// the question card folds up and floats off into the sky
 function send() {
   const text = $('#answer').value.trim();
   if (!text) {

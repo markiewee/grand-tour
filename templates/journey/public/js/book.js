@@ -1,6 +1,7 @@
-// The Book: the last envelope collects every poster, every lantern, every note and every letter
-// into one book that can be printed. Voice notes and videos go in as QR codes.
+// The Book: the last envelope collects every poster, every answer sent up, every note and every
+// letter into one book that can be printed. Voice notes and videos go in as QR codes.
 import { fmt } from './clock.js';
+import { t, rise } from './copy.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -27,7 +28,7 @@ export function renderBook({ trip, state, tzOf }) {
   const cover = el('div', 'page cover');
   const j = trip.j;
   cover.append(el('div', 'lbl gold', j.bookLabel || j.subtitle || ''), el('h2', null, `${j.for}'s Book`),
-    el('p', null, `${posters.length} posters · every lantern · every letter`));
+    el('p', null, `${posters.length} posters · every ${rise().one} · every letter`));
   pages.appendChild(cover);
 
   for (const s of posters) {
@@ -41,7 +42,7 @@ export function renderBook({ trip, state, tzOf }) {
     const ans = state.answers[s.id];
     if (s.question) {
       p.append(el('div', 'q2', s.question));
-      p.append(el('p', 'a2', ans ? ans.text : 'Not answered on the trip. There is still room here.'));
+      p.append(el('p', 'a2', ans ? ans.text : t('notAnswered')));
     }
     pages.appendChild(p);
   }
@@ -49,13 +50,13 @@ export function renderBook({ trip, state, tzOf }) {
   const letters = state.letters || [];
   if (letters.length) {
     const p = el('div', 'page');
-    p.append(el('div', 'lbl red', (j.midnight && j.midnight.dayLabel) || ''), el('h3', null, 'The midnight letters'));
+    p.append(el('div', 'lbl red', (j.midnight && j.midnight.dayLabel) || ''), el('h3', null, t('midnightLetters')));
     for (const l of letters) {
       const row = el('div', 'letter-row');
       const left = el('div');
       left.append(el('div', 'lbl', l.last ? `From ${l.from} · last` : `From ${l.from}`));
       if (l.text) left.append(el('p', 'a2', l.text));
-      if (l.audio || l.video) left.append(el('div', 'q2', l.video ? 'Scan to watch' : 'Scan to listen'));
+      if (l.audio || l.video) left.append(el('div', 'q2', l.video ? t('scanWatch') : t('scanListen')));
       row.appendChild(left);
       const media = l.video || l.audio;
       if (media) { const q = qrSvg(new URL(media, location.href).href); if (q) row.appendChild(q); }
@@ -69,7 +70,7 @@ export function renderBook({ trip, state, tzOf }) {
   if (j.callback && first.question) {
     const last = el('div', 'page last');
     last.append(el('div', 'moon-mark'), el('div', 'lbl gold', j.callback.label || ''),
-      el('h3', null, j.callback.title || 'Your first lantern comes back'),
+      el('h3', null, j.callback.title || t('firstComesBack')),
       el('p', 'a2', `At ${first.place} you were asked: ${first.question} This app will show you what you wrote, so you can see what you found.`));
     pages.appendChild(last);
   }

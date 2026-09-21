@@ -2,7 +2,7 @@
 import { fmt, setRehearsal, now, rehearsing, setHomeZone } from './clock.js';
 import { parseJourney } from './trip.js';
 import { bindCopy } from './bind.js';
-import { loadTheme } from './copy.js';
+import { loadTheme, t } from './copy.js';
 
 const $ = (s) => document.querySelector(s);
 const q = new URLSearchParams(location.search);
@@ -41,8 +41,8 @@ function statusFor(s) {
   const answered = ev.find((e) => e.type === 'answered');
   const o = DATA.overrides[s.id];
   if (opened) return { cls: 'opened', text: `Opened ${fmt.time(opened.at, tz(s))}${answered ? ' · answered' : ''}` };
-  if (o === 'hold') return { cls: 'held', text: 'Held back' };
-  if (o === 'open') return { cls: 'ready', text: 'Opened early' };
+  if (o === 'hold') return { cls: 'held', text: t('heldBack') };
+  if (o === 'open') return { cls: 'ready', text: t('openedEarly') };
   if (s.n === 1 || Date.now() >= s.at) return { cls: 'ready', text: 'Ready' };
   return { cls: 'sealed', text: 'Sealed' };
 }
@@ -63,8 +63,8 @@ function renderEnvelopes() {
     const actions = el('div', 'row');
     const mk = (label, mode) => { const b = el('button', 'btn small ghost', label); b.addEventListener('click', async () => { await api('api/key/override', { id: s.id, mode }); DATA.overrides[s.id] = mode || undefined; if (!mode) delete DATA.overrides[s.id]; renderEnvelopes(); }); return b; };
     if (st.cls !== 'opened') {
-      if (DATA.overrides[s.id]) actions.append(mk('Back to its time', null));
-      else actions.append(mk('Open now', 'open'), mk('Hold it back', 'hold'));
+      if (DATA.overrides[s.id]) actions.append(mk(t('backToTime'), null));
+      else actions.append(mk(t('openNow'), 'open'), mk('Hold it back', 'hold'));
     }
     const peek = el('button', 'btn small ghost', 'See it');
     peek.addEventListener('click', () => previewAt(Math.max(s.at + 60e3, TRIP.stops[0].at), s.id));
@@ -114,15 +114,15 @@ function setupRehearsal() {
   const slider = $('#rSlider');
   const sync = () => {
     const r = rehearsing();
-    const t = now();
-    $('#rClock').textContent = r ? `${fmt.dayLong(t)}, ${fmt.time(t)}${J.tzCity ? ` in ${J.tzCity}` : ''}` : 'Real time';
-    slider.value = String(Math.round(Math.max(0, Math.min(1, (t - T0) / (T1 - T0))) * 1000));
+    const at = now();
+    $('#rClock').textContent = r ? `${fmt.dayLong(at)}, ${fmt.time(at)}${J.tzCity ? ` in ${J.tzCity}` : ''}` : 'Real time';
+    slider.value = String(Math.round(Math.max(0, Math.min(1, (at - T0) / (T1 - T0))) * 1000));
   };
   slider.addEventListener('input', () => { setRehearsal(T0 + (T1 - T0) * slider.value / 1000, 0); sync(); });
   slider.addEventListener('change', () => reloadFrame());
   $('#rStart').addEventListener('click', () => { clearRehearsalState(); setRehearsal(TRIP.stops[0].at + 5 * 60e3, 1); sync(); reloadFrame(); });
   $('#rNext').addEventListener('click', () => {
-    const t = now(); const nx = TRIP.stops.find((s) => s.at > t + 30e3) || TRIP.stops[TRIP.stops.length - 1];
+    const at = now(); const nx = TRIP.stops.find((s) => s.at > at + 30e3) || TRIP.stops[TRIP.stops.length - 1];
     setRehearsal(nx.at + 60e3, 1); sync(); reloadFrame();
   });
   $('#rMidnight').addEventListener('click', () => { setRehearsal(J.midnightAt + 30e3, 1); sync(); reloadFrame(); });
@@ -145,8 +145,8 @@ function hideMissingJumps() {
   if (!J.midnightAt) { const b = $('#rMidnight'); if (b) b.hidden = true; }
   if (!J.callbackAt) { const b = $('#rMoon'); if (b) b.hidden = true; }
 }
-function previewAt(t, id) {
-  setRehearsal(t, 1);
+function previewAt(at, id) {
+  setRehearsal(at, 1);
   const p = $('#preview'); p.classList.remove('closed'); $('#pToggle').textContent = 'Hide';
   reloadFrame(id);
   p.scrollIntoView({ behavior: 'smooth', block: 'start' });

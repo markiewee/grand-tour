@@ -11,6 +11,7 @@
   "demo": true,
   "midnight": {
    "at": "2027-04-04T00:00:00+09:00",
+   "hint": "Happy birthday.",
    "title": "Happy birthday, Ren",
    "dayLabel": "Sunday 4 April · Kyoto",
    "closes": "2027-04-03T23:59:00+09:00"

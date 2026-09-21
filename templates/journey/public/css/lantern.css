@@ -154,15 +154,15 @@ button:focus-visible, textarea:focus-visible, [role="button"]:focus-visible { ou
 .q .answered-note { font-family: var(--label); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--mist); }
 .after-stop { margin-top: 18px; }
 
-/* ---------- the answer becomes a lantern ---------- */
+/* ---------- the answer goes up ---------- */
 .fly { position: absolute; z-index: 50; width: 40px; height: 52px; margin: -26px 0 0 -20px; pointer-events: none;
-       background: url(../img/art/lantern.png) center / contain no-repeat; filter: drop-shadow(0 0 14px rgba(255,180,80,.75)); opacity: 0; }
+       background: url(../img/art/rise.png) center / contain no-repeat; filter: drop-shadow(0 0 14px rgba(255,180,80,.75)); opacity: 0; }
 .toast { position: absolute; left: 50%; top: calc(var(--safe-t) + 96px); transform: translateX(-50%); text-align: center; opacity: 0; width: 82%; pointer-events: none; z-index: 45; }
 .toast p { font-style: italic; font-size: 18px; color: #e8dfc6; margin: 6px 0 0; }
 .peek { position: absolute; left: 50%; bottom: calc(var(--safe-b) + 180px); transform: translateX(-50%); z-index: 46; pointer-events: none; opacity: 0;
         font-style: italic; font-size: 16px; color: var(--ivory); background: rgba(7,10,20,.72); padding: 9px 14px; border-radius: 14px; white-space: nowrap; }
 
-/* ---------- a lantern, opened ---------- */
+/* ---------- one of them, opened ---------- */
 .memo { position: absolute; inset: 0; z-index: 70; display: grid; place-items: center; visibility: hidden; }
 .memo .scrim { position: absolute; inset: 0; background: radial-gradient(60% 45% at 50% 48%, rgba(255,190,110,.20), rgba(7,10,20,.72)); opacity: 0; }
 .memo-card { position: relative; width: 82%; max-width: 330px; max-height: 78%; overflow-y: auto; border-radius: 18px; padding: 18px 18px 16px; color: var(--ink); text-align: center;
@@ -184,11 +184,11 @@ button:focus-visible, textarea:focus-visible, [role="button"]:focus-visible { ou
 #midnight .clock { font-family: var(--display); font-size: 54px; line-height: 1; margin: 0 0 6px; color: var(--gold-soft); text-shadow: 0 0 30px rgba(240,207,134,.4); }
 #midnight h2 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.05; margin: 0; text-wrap: balance; }
 #midnight .sub { font-style: italic; font-size: 16px; color: #cfc6ad; margin: 10px auto 0; max-width: 30ch; }
-/* --s shrinks a lantern so any number of them still fit one screen; see layout() in midnight.js */
+/* --s shrinks each one so any number of them still fit one screen; see layout() in midnight.js */
 .fall { position: absolute; width: calc(58px * var(--s, 1)); margin-left: calc(-29px * var(--s, 1)); text-align: center; cursor: pointer; z-index: 20; }
-/* a small lantern still needs a finger-sized thing to press */
+/* a small one still needs a finger-sized thing to press */
 .fall::before { content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max(100%, 44px); height: max(100%, 44px); }
-.fall .lamp { width: calc(44px * var(--s, 1)); height: calc(57px * var(--s, 1)); margin: 0 auto; background: url(../img/art/lantern.png) center / contain no-repeat; filter: drop-shadow(0 0 16px rgba(255,180,80,.7)); transition: transform .15s ease-out; }
+.fall .lamp { width: calc(44px * var(--s, 1)); height: calc(57px * var(--s, 1)); margin: 0 auto; background: url(../img/art/rise.png) center / contain no-repeat; filter: drop-shadow(0 0 16px rgba(255,180,80,.7)); transition: transform .15s ease-out; }
 .fall:active .lamp { transform: scale(1.12); }
 .fall .who { margin-top: 5px; font-family: var(--label); font-weight: 700; font-size: 8.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-soft); white-space: nowrap; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
 .fall.nameless .who { display: none; }
@@ -263,9 +263,9 @@ button:focus-visible, textarea:focus-visible, [role="button"]:focus-visible { ou
 .demo-bar:not([hidden]) ~ #stop .back { top: calc(var(--safe-t) + 74px); }
 .demo-bar:not([hidden]) ~ #book .back { top: 68px; }
 
-/* A long name used to be clipped by the lantern it sits under, because the lantern is 46px wide
+/* A long name used to be clipped by the lamp it sits under, because the lamp is 46px wide
    and a name is not. The name is taken out of the flow and given its own width, wider than the
-   lantern and the same whatever the lantern shrinks to, since it still has to be read. */
+   lamp and the same whatever the lamp shrinks to, since it still has to be read. */
 .fall .who { position: absolute; left: 50%; transform: translateX(-50%); top: 100%; margin-top: 0;
   width: 104px; white-space: normal; line-height: 1.12; overflow-wrap: break-word;
   letter-spacing: .1em; }
