@@ -2,6 +2,7 @@
 import { fmt, setRehearsal, now, rehearsing, setHomeZone } from './clock.js';
 import { parseJourney } from './trip.js';
 import { bindCopy } from './bind.js';
+import { loadTheme } from './copy.js';
 
 const $ = (s) => document.querySelector(s);
 const q = new URLSearchParams(location.search);
@@ -22,6 +23,7 @@ async function load() {
   TRIP = await (await fetch('data/trip.json', { cache: 'no-cache' })).json();
   J = parseJourney(TRIP);
   setHomeZone(J.tz);
+  await loadTheme(document, J);
   bindCopy(document, J);
   for (const s of TRIP.stops) s.at = Date.parse(s.opensAt);
   try { DATA = await api(`api/key?k=${encodeURIComponent(K || '')}`); }

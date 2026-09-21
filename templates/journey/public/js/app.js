@@ -1,6 +1,7 @@
 import { now, fmt, onClockChange, rehearsing } from './clock.js';
 import { loadTrip, trip, journey, stops, stopById, statusOf, nextStop, tzOf, distanceM } from './trip.js';
 import { bindCopy } from './bind.js';
+import { loadTheme } from './copy.js';
 import { setupDemo } from './demo.js';
 import { projectStops, cityLabels } from './map.js';
 import { state, load, save, markOpened, setAnswer, fetchRemote, resetAll } from './store.js';
@@ -295,6 +296,7 @@ function watchPlace() {
 /* ---------------- boot ---------------- */
 async function boot() {
   await loadTrip();
+  await loadTheme(document, journey());
   bindCopy(document, journey());
   load();
   setupDemo(journey(), stops(), state, save);

@@ -5,12 +5,18 @@
 // minute of video is many times that.
 import { upload } from '../vendor/blob-client.js';
 import { bindCopy } from './bind.js';
+import { loadTheme } from './copy.js';
 import { parseJourney } from './trip.js';
 
 // The letterbox never shows the stops, only the framing copy, so it reads the journey file for
-// that and nothing else.
+// that and nothing else. The theme comes with it, for the page's own colours and any line the
+// theme names rather than the journey.
 fetch('data/trip.json', { cache: 'no-cache' }).then((r) => r.json())
-  .then((raw) => bindCopy(document, parseJourney(raw)))
+  .then(async (raw) => {
+    const j = parseJourney(raw);
+    await loadTheme(document, j);
+    bindCopy(document, j);
+  })
   .catch(() => { /* the form still works with the words that are already on the page */ });
 
 const $ = (s) => document.querySelector(s);
