@@ -88,7 +88,7 @@ button:focus-visible, textarea:focus-visible, [role="button"]:focus-visible { ou
 .lp.top .in { box-shadow: inset 0 -7px 9px -9px color-mix(in srgb, color-mix(in srgb, var(--gold) 31%, black) 45%, transparent); }
 .lp.mid .in { box-shadow: inset 0 7px 9px -9px color-mix(in srgb, color-mix(in srgb, var(--gold) 31%, black) 40%, transparent), inset 0 -7px 9px -9px color-mix(in srgb, color-mix(in srgb, var(--gold) 31%, black) 40%, transparent); }
 .lp.bot .in { box-shadow: inset 0 7px 9px -9px color-mix(in srgb, color-mix(in srgb, var(--gold) 31%, black) 45%, transparent); }
-.lp .out { transform: rotateX(180deg); background: linear-gradient(170deg, color-mix(in srgb, var(--gold) 17%, white), color-mix(in srgb, var(--gold) 36%, white)); box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--gold) 21%, white), inset 0 0 0 6.5px var(--gold); display: grid; place-items: center; }
+.lp .out { transform: rotateX(180deg); background: linear-gradient(170deg, color-mix(in srgb, var(--paper) 56%, white), color-mix(in srgb, var(--paper) 97%, black)); box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--paper) 70%, white), inset 0 0 0 6.5px var(--gold); display: grid; place-items: center; }
 .lp .out .mono { font-family: var(--display); font-size: 16px; color: var(--gold); letter-spacing: .1em; opacity: .9; }
 .lp .shade { position: absolute; inset: 0; background: color-mix(in srgb, var(--gold) 19%, black); opacity: 0; pointer-events: none; }
 #letterStage { position: absolute; inset: 0; perspective: 1000px; transform-style: preserve-3d; pointer-events: none; z-index: 30; }
