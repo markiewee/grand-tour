@@ -433,7 +433,6 @@ def test_retheme_renames_the_offline_cache(tmp_path):
     """A phone serves the journey from a cache it only rebuilds when the name changes, so a
     retheme that leaves the name alone leaves the old theme's art on the phone."""
     app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
-    journey.build(app) if False else None
     before = (app / "public" / "sw.js").read_text(encoding="utf-8")
     out = journey.retheme(app, "canyon-ember")
     after = (app / "public" / "sw.js").read_text(encoding="utf-8")
