@@ -355,6 +355,23 @@ def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
     return dest
 
 
+def retheme(app, theme_name):
+    """Dress an existing app in a different theme.
+
+    A traveller's own sent answer was written under one noun and reading it back under another
+    would put words in their mouth, so an app that has been travelled is left alone.
+    """
+    from . import theme as theme_mod
+    app = Path(app)
+    trip = app / "public" / "data" / "trip.json"
+    if trip.exists():
+        with open(trip, encoding="utf-8") as fh:
+            if json.load(fh).get("answers"):
+                raise ValueError("this journey has been answered; retheming it would rewrite "
+                                 "words the traveller has already read")
+    return {"app": str(app), "theme": theme_mod.apply_to(app, theme_name)["name"]}
+
+
 def _time(value):
     text = str(value or "09:00")
     return text if len(text) == 8 else text + ":00"

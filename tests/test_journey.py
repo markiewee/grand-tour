@@ -321,3 +321,20 @@ def test_new_copies_the_theme_art_and_writes_the_generated_files(tmp_path):
     words = json.loads((app / "public" / "data" / "theme.json").read_text())
     assert words["copy"]["send"] == "Send it up as a crane"
     assert words["rise"]["many"] == "cranes"
+
+
+def test_retheme_swaps_the_art_and_the_words(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    journey.retheme(app, "canyon-ember")
+    words = json.loads((app / "public" / "data" / "theme.json").read_text())
+    assert words["copy"]["send"] == "Send it up as an ember"
+
+
+def test_retheme_refuses_an_app_with_answers_in_it(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    trip = app / "public" / "data" / "trip.json"
+    trip.parent.mkdir(parents=True, exist_ok=True)
+    trip.write_text(json.dumps({"journey": {"title": "T"}, "stops": [],
+                                "answers": {"inari": "with you"}}))
+    with pytest.raises(ValueError, match="answered"):
+        journey.retheme(app, "canyon-ember")
