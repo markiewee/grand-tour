@@ -1,7 +1,0 @@
-{
-  "name": "Art deco travel poster",
-  "house_prompt": "1930s art deco travel poster, stone lithograph print, flat areas of colour, limited palette of lacquer red, jade green, ochre gold, ivory, midnight indigo and misty grey-green, bold simplified silhouettes, strong diagonal composition, subtle paper grain, portrait 3:4",
-  "avoid": ["photorealism", "3D render", "gradients", "phones", "extra people", "caricature"],
-  "palette": { "red": "#b3342b", "green": "#2e6a5c", "gold": "#d6a13f", "ivory": "#f2e7cf", "ink": "#1b2340", "mist": "#a4bcb8", "paper": "#efe3c6" },
-  "fonts": { "display": "Limelight", "deco": "Poiret One", "label": "Josefin Sans", "text": "Cormorant Garamond" }
-}
