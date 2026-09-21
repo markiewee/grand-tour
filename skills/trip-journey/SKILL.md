@@ -23,9 +23,18 @@ The plugin root is two folders up from this skill's base directory. Run:
    that matters more than the others, such as a birthday. Do not assume there is one. A journey
    with no such moment has no midnight screen and no letterbox, and is simpler for it.
 
-2. **Scaffold.** `adventure journey new trips/<id>/app --trip trips/<id>/trip.json`
-   This copies the engine and drafts one stop per activity and per outbound flight, with the copy
-   left empty. It never overwrites an existing directory.
+2. **Pick a theme, then scaffold.**
+   `adventure journey new trips/<id>/app --trip trips/<id>/trip.json --theme <name>`
+   Three themes ship: `lantern-night`, `kyoto-woodblock` and `canyon-ember`. Show the traveller's
+   friend the three and let them pick, or make a new one with `adventure theme new <name>`, which
+   writes the folder and the brief for its five images. A theme decides the painted art, the
+   colours, the four typefaces and the words, including the noun for the thing that rises when a
+   question is answered. It decides nothing about how the journey works.
+
+   Scaffolding copies the engine and drafts one stop per activity and per outbound flight, with
+   the copy left empty. It never overwrites an existing directory. To change the theme later:
+   `adventure journey retheme trips/<id>/app --theme <name>`, which refuses once the traveller has
+   answered anything, because their own words were written under one noun.
 
 3. **Write the journey block.** Open `trips/<id>/app/public/data/trip.json` and fill in `title`,
    `for`, `from`, `subtitle`, `opening`, `tz` and `tzCity`. Add `midnight`, `callback` and
@@ -41,7 +50,8 @@ The plugin root is two folders up from this skill's base directory. Run:
      temple or a park, 400 for an airport terminal. Without it the envelope opens on time only.
    - `sources`, one or two URLs that actually support the fact in the lede.
 
-5. **Posters.** Make them with `trip-guide`. Write the concept from the place, not from the
+5. **Posters.** Make them with `trip-guide`, passing the same `--theme` so the posters and the
+   app match. Write the concept from the place, not from the
    caption: a caption describes the picture to the person reading it, and a generator given only
    that draws the right composition in the wrong country. Then cut each one for the phone:
    `adventure plates trips/<id>/art/final/<stop>.jpg --out trips/<id>/app/public/img`

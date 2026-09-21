@@ -32,9 +32,9 @@ it opens early the moment they are standing in the right place. Inside, a letter
 poster that prints itself one ink plate at a time, three lines about where they are, and a note
 from whoever made it.
 
-About half the stops ask a question. The answer rises into the night sky as a paper lantern, and
-the sky tilts with the phone. One named date later, the first lantern comes back so they can read
-what they wrote.
+About half the stops ask a question. The answer rises into the night sky as a paper lantern, or a
+crane, or an ember, depending on the theme, and the sky tilts with the phone. One named date
+later, the first one comes back so they can read what they wrote.
 
 <p align="center">
   <img src="docs/screenshots/midnight.png" width="240" alt="Letters coming down as lanterns at midnight">
@@ -80,7 +80,7 @@ The helper also works on its own:
 
 Honestly, about an afternoon.
 
-1. **Copy the engine.** `python3 -m adventure journey new my-journey --trip my-trip.json`
+1. **Copy the engine.** `python3 -m adventure journey new my-journey --trip my-trip.json --theme kyoto-woodblock`
 2. **Edit one file.** `my-journey/public/data/trip.json` holds everything: the title, who it is
    for, who it is from, and a stop per envelope with a time, a place, a lat/lng and three lines of
    copy. Every word on screen comes out of that file.
@@ -105,6 +105,40 @@ The letterbox is the only part that needs accounts: two Vercel Blob stores, one 
 letters and one public for the recordings, because a store is public or private for its whole life.
 A journey without a letterbox needs neither, and everything else works the same.
 
+## Themes
+
+A journey's painted art, its colours, its four typefaces and every word on its screen come out of
+a theme. Three ship:
+
+| Theme | The night | What an answer becomes |
+|---|---|---|
+| `lantern-night` | art deco, indigo and lacquer red | a paper lantern |
+| `kyoto-woodblock` | ukiyo-e, the hills east of Kyoto | a paper crane |
+| `canyon-ember` | a WPA screenprint of a desert rim | an ember |
+
+    adventure journey new trips/kix/app --trip trips/kix/trip.json --theme kyoto-woodblock
+    adventure journey retheme trips/kix/app --theme canyon-ember
+
+The same theme feeds the poster prompts and the printed guide, so a trip's posters and its app
+cannot drift apart. `retheme` refuses once the traveller has answered a question, because their
+own words were written under one noun and cannot be read back under another.
+
+To build one:
+
+    adventure theme new harbour-dusk
+
+That writes the folder and `PROMPTS.md`, the brief for five images with the size each has to end
+at. Generate them, name each file after its slot, then:
+
+    adventure theme cut harbour-dusk --from ~/Downloads/harbour --moon trim
+
+which trims the paper margin generators print, crops the moon, and lifts the rising thing off its
+background. Fill in `theme.json`'s house prompt and its noun, and override any line you want in
+your own voice. Every line you do not write is inherited from `templates/themes/_base/copy.json`
+with your noun dropped into it, so a theme can exist with one word.
+
+A theme owns no code. It cannot change how an envelope opens, only what it is made of.
+
 ## Rules it keeps
 
 - It never pays, never types card details or passwords, and never presses the final booking button.
@@ -119,7 +153,8 @@ A journey without a letterbox needs neither, and everything else works the same.
 
     skills/             the five skills and the poster rules
     adventure/          the Python helper (python3 -m adventure --help)
-    templates/          a sample trip, two house styles, the A4 page template and its CSS
+    templates/          a sample trip, the A4 page template and its CSS
+    templates/themes/   the three themes, and the base copy every theme inherits
     templates/journey/  the journey engine, with a worked example inside it
     tests/              pytest, plus node --test for the map and the journey loader
 
