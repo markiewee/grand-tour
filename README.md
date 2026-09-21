@@ -73,8 +73,14 @@ You also need Google Chrome to print PDFs. Two things are optional:
 The helper also works on its own:
 
     python3 -m adventure gaps templates/trip.example.json
-    python3 -m adventure journey check templates/journey
     python3 -m adventure commons-search "Kamo River 1915"
+
+The worked example is the Japan journey inside the engine. It has no art of its own until a theme
+dresses it, so scaffold a copy and look at that:
+
+    python3 -m adventure journey new /tmp/demo --theme kyoto-woodblock
+    python3 -m adventure journey check /tmp/demo
+    cd /tmp/demo && python3 server.py
 
 ## Make your own journey
 
