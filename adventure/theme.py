@@ -89,8 +89,8 @@ def copy_for(loaded):
 
 
 CSS = """\
-/* Written by `python3 -m adventure journey new` or `journey retheme`. Do not edit by hand:
-   any change here is overwritten the next time the theme is applied. The theme is {name}. */
+/* Written by adventure, from the {name} theme. Do not edit by hand: any change here is
+   overwritten the next time a theme is applied. Change the theme's palette instead. */
 @import url("https://fonts.googleapis.com/css2?{query}&display=swap");
 :root {{
 {tokens}

@@ -62,6 +62,10 @@ def main(argv=None):
     p.add_argument("out")
     p.add_argument("images", nargs="+")
 
+    p = sub.add_parser("guide", help="write guide.css and the theme's stylesheet into a page folder")
+    p.add_argument("out")
+    p.add_argument("--theme", required=True, help="a theme name or a path to a theme folder")
+
     p = sub.add_parser("pdf", help="print an HTML file to PDF with headless Chrome")
     p.add_argument("html")
     p.add_argument("pdf")
@@ -112,6 +116,8 @@ def main(argv=None):
         _print({"image": args.image, "words": qa.text_found(args.image)})
     elif args.cmd == "sheet":
         print(qa.contact_sheet(args.images, args.out))
+    elif args.cmd == "guide":
+        _print(render.guide_folder(args.out, theme.load(args.theme)))
     elif args.cmd == "pdf":
         print(render.to_pdf(args.html, args.pdf))
     elif args.cmd == "journey":
