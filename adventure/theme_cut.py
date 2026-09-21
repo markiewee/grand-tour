@@ -32,7 +32,7 @@ def _array(im):
     return np, np.asarray(im.convert("RGB")).astype(float)
 
 
-def strip_border(im, tol=51, cap=0.15, extra=5, strict=False):
+def strip_border(im, tol=51, cap=0.45, extra=5):
     """Trim the printed paper margin. The corners say what the margin looks like.
 
     Each side is walked twice at once. `solid` counts the leading lines that are almost entirely
@@ -43,16 +43,23 @@ def strip_border(im, tol=51, cap=0.15, extra=5, strict=False):
     side never stopped looking like margin, and trusting it would eat the picture: a notch running
     down one edge does exactly that, and so does a picture with no margin at all. Then `solid` is
     the answer, and for a picture with no margin `solid` is zero and nothing is cut.
-
-    `strict` raises the bar to almost every pixel, which is what a disc sitting on a plain card
-    wants: stop the moment the disc appears rather than at the card's own edge.
     """
     np, a = _array(im)
     h, w, _ = a.shape
     corners = np.concatenate([a[:8, :8].reshape(-1, 3), a[:8, -8:].reshape(-1, 3),
                               a[-8:, :8].reshape(-1, 3), a[-8:, -8:].reshape(-1, 3)])
     c = np.median(corners, axis=0)
-    enough = 0.99 if strict else 0.15
+    enough = 0.15
+
+    def settle(solid, loose):
+        """How far in to cut, given the two readings.
+
+        The loose reading reaches past a torn corner printed over part of one edge, which the
+        solid one stops at. But a repeating pattern also reads as margin line after line, and
+        following it eats the pattern. A frame is a frame: the loose reading is allowed to run
+        past the solid one, not to wander away from it.
+        """
+        return loose if loose <= solid * 3 + 20 else solid
 
     def walk(lines, limit):
         solid = loose = 0
@@ -60,7 +67,7 @@ def strip_border(im, tol=51, cap=0.15, extra=5, strict=False):
         for line in lines:
             near = (np.sqrt(((line - c) ** 2).sum(axis=1)) < tol).mean()
             if near <= enough:
-                return loose
+                return settle(solid, loose)
             loose += 1
             if still_solid and near > 0.95:
                 solid += 1
@@ -69,15 +76,17 @@ def strip_border(im, tol=51, cap=0.15, extra=5, strict=False):
             if loose >= limit:
                 # Neither reading ever stopped, so this side is not a margin at all: it is a
                 # picture whose own colours happen to sit near the corner's. Cut nothing.
-                return 0 if solid >= limit else solid
-        return 0 if solid >= limit else solid
+                return 0 if solid >= limit else settle(solid, solid)
+        return 0 if solid >= limit else settle(solid, solid)
 
     lh, lw = max(1, int(h * cap)), max(1, int(w * cap))
     top = walk([a[y] for y in range(lh)], lh)
     bottom = walk([a[h - 1 - y] for y in range(lh)], lh)
     left = walk([a[:, x] for x in range(lw)], lw)
     right = walk([a[:, w - 1 - x] for x in range(lw)], lw)
-    if max(top, bottom, left, right) == 0:
+    # A printed margin is a frame and shows up on every side. One flat band on its own is part of
+    # the picture, an empty sky or a still sea, and cutting it off would be cutting the picture.
+    if sum(1 for side in (top, bottom, left, right) if side) < 3:
         return im
     box = (left + extra if left else 0, top + extra if top else 0,
            w - (right + extra if right else 0), h - (bottom + extra if bottom else 0))
@@ -96,8 +105,37 @@ def cover(im, tw, th, bias=0.5):
 def moon(im, mode, size=768):
     """`fill` for a disc drawn larger than its frame, `trim` for one sitting on a plain card."""
     if mode == "trim":
-        return cover(strip_border(im, tol=30, cap=0.45, extra=0, strict=True), size, size)
+        # The frame first, then the disc. A printed rule a few pixels in from the edge is not the
+        # card, and looking for the disc without removing it finds the rule instead.
+        return _disc(strip_border(im), size)
     return cover(strip_border(im), size, size)
+
+
+def _disc(im, size, tol=25, ink=0.02):
+    """Square up on the disc itself rather than on what is left after trimming the card.
+
+    Trimming each side independently gives the disc's box only when the disc is centred. Off
+    centre, one side's card is wider than the walk will go, that side keeps its card, and the
+    card then shows inside the circle the app masks the picture into.
+
+    `tol` is above the grain of a printed card, and `ink` is the share of a line that has to be
+    something other than card before the line counts as part of the disc. Both are set by what
+    real prints do, not by what a flat fill does.
+    """
+    np, a = _array(im)
+    h, w, _ = a.shape
+    card = np.median(np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]]), axis=0)
+    mask = np.sqrt(((a - card) ** 2).sum(axis=2)) > tol
+    rows = np.where(mask.mean(axis=1) > ink)[0]
+    cols = np.where(mask.mean(axis=0) > ink)[0]
+    if not len(rows) or not len(cols):
+        return cover(im, size, size)     # all one colour: there is no disc to find
+    y0, y1, x0, x1 = rows[0], rows[-1], cols[0], cols[-1]
+    cy, cx = (y0 + y1) / 2, (x0 + x1) / 2
+    r = max(x1 - x0, y1 - y0) / 2
+    box = (max(0, round(cx - r)), max(0, round(cy - r)),
+           min(w, round(cx + r)), min(h, round(cy + r)))
+    return cover(im.crop(box), size, size)
 
 
 def _background(np, a, tol):

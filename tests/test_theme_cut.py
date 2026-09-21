@@ -124,3 +124,45 @@ def test_run_says_which_picture_it_could_not_find(tmp_path):
     (folder / "moon_2.jpeg").unlink()
     with pytest.raises(FileNotFoundError, match="moon"):
         theme_cut.run("harbour-dusk", folder, dest=tmp_path / "art")
+
+
+@pytest.mark.parametrize("margin", [10, 30, 60, 75, 140])
+def test_a_wide_printed_mat_is_trimmed_too(margin):
+    """A fifteen to twenty percent mat is an ordinary generator output. Leaving it means the
+    finished sky is a photograph of a poster rather than the poster."""
+    out = theme_cut.strip_border(bordered((400, 500), margin=margin, notch=False))
+    assert out.getpixel((0, 0)) == NAVY, f"a {margin}px margin survived"
+    assert out.getpixel((out.width - 1, out.height - 1)) == NAVY
+
+
+def test_one_flat_band_on_its_own_is_part_of_the_picture():
+    """A margin is a frame and shows on every side. A dark sky above a horizon shows on one, and
+    cutting it off would be cutting the picture."""
+    im = Image.new("RGB", (400, 700), NAVY)
+    im.paste(FLAME, (0, 400, 400, 700))
+    assert theme_cut.strip_border(im).size == (400, 700)
+
+
+@pytest.mark.parametrize("offset", [(0, 0), (300, 0), (-400, 120), (450, -120)])
+def test_a_disc_off_centre_still_loses_its_card(offset):
+    """The app masks the moon into a circle inscribed in the square, so card left at an edge
+    midpoint is card showing inside the moon."""
+    w, h, r = 1600, 900, 300
+    im = Image.new("RGB", (w, h), CREAM)
+    cx, cy = w // 2 + offset[0], h // 2 + offset[1]
+    ImageDraw.Draw(im).ellipse((cx - r, cy - r, cx + r, cy + r), fill=GREY)
+    out = theme_cut.moon(im, "trim", size=240)
+    edges = {"top": out.getpixel((120, 2)), "bottom": out.getpixel((120, 237)),
+             "left": out.getpixel((2, 120)), "right": out.getpixel((237, 120))}
+    card = [side for side, px in edges.items() if abs(px[0] - CREAM[0]) < 10 and abs(px[2] - CREAM[2]) < 10]
+    assert card == [], f"card showing at {card} for offset {offset}"
+
+
+def test_a_clipped_disc_still_comes_out_square_and_mostly_moon():
+    """A disc drawn off the edge of its card is really a fill picture. trim should still hand
+    back a usable square rather than refusing or returning card."""
+    im = Image.new("RGB", (1600, 900), CREAM)
+    ImageDraw.Draw(im).ellipse((1000, 350, 1600, 950), fill=GREY)
+    out = theme_cut.moon(im, "trim", size=240)
+    assert out.size == (240, 240)
+    assert out.getpixel((120, 120))[0] == pytest.approx(GREY[0], abs=10)
