@@ -1,6 +1,7 @@
 // Inside the envelope: the poster prints plate by plate, then three lines on the place, the note
 // (hold to read), and at about half the stops a question whose answer goes up into the sky.
 import { sfx, audio } from './audio.js';
+import { t } from './copy.js';
 
 const gsap = window.gsap;
 const $ = (s) => document.querySelector(s);
@@ -41,7 +42,7 @@ export function renderStop(stop, ctx) {
   $('#qAnswer').textContent = answer || '';
   $('#answer').value = '';
   const pending = stop.question && !answer;
-  $('#doneBtn').textContent = pending ? 'Answer it later' : 'Back to your sky';
+  $('#doneBtn').textContent = pending ? t('answerLater') : t('back');
   $('#doneBtn').className = pending ? 'btn quiet' : 'btn';
   if (ctx.animate) printPoster(); else showPrinted();
 }
