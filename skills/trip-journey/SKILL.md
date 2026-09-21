@@ -1,6 +1,6 @@
 ---
 name: trip-journey
-description: Use when someone wants a trip delivered as an interactive journey rather than a printed guide, or asks for a sealed app, an envelope app, a surprise trip app or a keepsake the traveller unlocks as they go. Builds a web app from the trip file where each stop stays sealed until its time or until the traveller is standing there, with posters that print, questions that become paper lanterns, an optional letterbox of letters from friends, and a book at the end. Rehearses the whole journey in a headless phone and hands over a deploy command.
+description: Use when someone wants a trip delivered as an interactive journey rather than a printed guide, or asks for a sealed app, an envelope app, a surprise trip app or a keepsake the traveller unlocks as they go. Builds a web app from the trip file where each stop stays sealed until its time or until the traveller is standing there, with posters that print, questions that rise into the sky as whatever the theme makes them, an optional letterbox of letters from friends, and a book at the end. Rehearses the whole journey in a headless phone and hands over a deploy command.
 ---
 
 # Trip journey
@@ -44,7 +44,8 @@ The plugin root is two folders up from this skill's base directory. Run:
    - `lede`, about 45 words, three sentences: what the place is, one checked fact from
      `trip-research` with a date or a number in it, and why this stop is in the journey.
    - `question` on about half of them. Open, personal, answerable in one line, never yes or no.
-     The answer rises into the sky as a paper lantern and comes back on the callback date.
+     The answer rises into the sky as a lantern, a crane or an ember, whichever the theme
+     chose, and comes back on the callback date.
    - `caption`, one sentence about the poster, as if printed on its back.
    - `geo` with `lat`, `lng` and `r` in metres: 200 for a restaurant or a bar, 300 to 500 for a
      temple or a park, 400 for an airport terminal. Without it the envelope opens on time only.
