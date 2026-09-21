@@ -197,8 +197,12 @@ def _theme_errors(app):
         with open(theme_file, encoding="utf-8") as fh:
             words = json.load(fh).get("copy", {})
         for key in theme_mod.base_copy():
-            if not words.get(key):
+            line = words.get(key)
+            if not line:
                 found.append(f"the theme has no word for {key}")
+            elif theme_mod.ANY_BRACE.search(line):
+                found.append(f"the theme's word for {key} still says "
+                             f"{theme_mod.ANY_BRACE.search(line).group(0)}")
 
     css_file = app / "public" / "css" / "theme.css"
     if not css_file.exists():

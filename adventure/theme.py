@@ -30,13 +30,14 @@ HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
 def resolve(name_or_path):
-    """A theme is named or pointed at. A name is looked up in the plugin's themes."""
-    path = Path(name_or_path)
-    if path.is_dir():
-        return path
+    """A theme is named or pointed at. The shipped names win, so a folder that happens to sit in
+    the working directory cannot quietly stand in for one of them."""
     named = THEMES / str(name_or_path)
     if named.is_dir():
         return named
+    path = Path(name_or_path)
+    if path.is_dir():
+        return path
     raise FileNotFoundError(f"no theme called {name_or_path} in {THEMES}")
 
 
@@ -55,13 +56,24 @@ def load(name_or_path):
     for font in FONTS:
         if not data.get("fonts", {}).get(font):
             raise ValueError(f"{directory.name}: fonts is missing {font}")
+    if not data.get("name"):
+        raise ValueError(f"{directory.name}: theme.json has no name")
     for key in RISE:
         if not data.get("rise", {}).get(key):
             raise ValueError(f"{directory.name}: rise is missing {key}")
+    # The sprite is drawn over the night with its own alpha. A JPEG has none, so it would draw as
+    # a rectangle, which looks like a mistake in the art rather than in the theme.
+    if not str(data["rise"]["asset"]).lower().endswith(".png"):
+        raise ValueError(f"{directory.name}: rise.asset is {data['rise']['asset']}, and the sprite "
+                         f"has to be a png because it is drawn with its own transparency")
     return data
 
 
-PLACEHOLDER = re.compile(r"\{([a-z_]+)\}")
+# The three forms of the theme's noun. rise.asset is a filename and is deliberately
+# not reachable from a sentence.
+NOUNS = ("a", "one", "many")
+PLACEHOLDER = re.compile(r"\{(" + "|".join(NOUNS) + r")\}")
+ANY_BRACE = re.compile(r"\{[^}]*\}")
 
 
 def base_copy():
@@ -80,10 +92,11 @@ def copy_for(loaded):
     rise = loaded["rise"]
     out = {}
     for key, line in words.items():
-        filled = PLACEHOLDER.sub(lambda m: str(rise.get(m.group(1), m.group(0))), line)
-        left = PLACEHOLDER.search(filled)
+        filled = PLACEHOLDER.sub(lambda m: str(rise[m.group(1)]), line)
+        left = ANY_BRACE.search(filled)
         if left:
-            raise ValueError(f"{loaded['name']}: copy.{key} has nothing to put in {left.group(0)}")
+            raise ValueError(f"{loaded['name']}: copy.{key} has nothing to put in {left.group(0)}. "
+                             f"The only words a line can ask for are {', '.join('{%s}' % n for n in NOUNS)}")
         out[key] = filled
     return out
 
@@ -142,7 +155,8 @@ def apply_to(app, name_or_path):
         if not src.exists():
             raise FileNotFoundError(f"{loaded['dir'].name}: no {src.name} to copy in as {name}")
         shutil.copyfile(src, art / name)
-    data = {"name": loaded["name"], "rise": loaded["rise"], "copy": copy_for(loaded)}
+    rise = {k: loaded["rise"][k] for k in NOUNS}
+    data = {"name": loaded["name"], "rise": rise, "copy": copy_for(loaded)}
     out = app / "public" / "data" / "theme.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -177,7 +191,7 @@ no lettering and no signature, because a word printed into the art cannot be tra
 and cannot be removed.
 
 Generators mostly offer 16:9 and 9:16. Generate at the ratio named below, then run
-`adventure theme cut {name} <folder>` and what comes out is the size in the first column. Name
+`adventure theme cut {name} --from <folder>` and what comes out is the size in the first column. Name
 each downloaded file after its slot, so `sky.jpg`, `moon_2.jpeg` and so on.
 
 | File | Ends at | Generate at | What it is |

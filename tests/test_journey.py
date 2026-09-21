@@ -416,3 +416,14 @@ def test_new_refuses_a_theme_that_has_not_been_drawn_yet_and_leaves_nothing_behi
     with pytest.raises(FileNotFoundError, match="sky.jpg"):
         journey.new(ENGINE, dest, theme_name=half)
     assert not dest.exists(), "a refused scaffold must not leave a directory it cannot reuse"
+
+
+def test_check_fails_on_a_word_with_a_placeholder_still_in_it(tmp_path):
+    """copy_for catches this when a theme is applied, but a theme.json edited by hand after the
+    fact, or a journey's own override, never goes through it."""
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    path = app / "public" / "data" / "theme.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["copy"]["send"] = "Send it up as {a}"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert any("{a}" in e for e in journey.check(app)["errors"])

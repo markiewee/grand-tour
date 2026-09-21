@@ -9,6 +9,11 @@ DEFAULT_MODEL = "gemini-3-pro-image"
 
 
 def build_prompt(concept, theme, reference_note=None):
+    # A theme straight out of `theme new` has no house style yet, and a prompt built from one
+    # reads "Style: ." and quietly draws whatever the generator felt like.
+    if not (theme.get("house_prompt") or "").strip():
+        raise ValueError(f"{theme.get('name', 'this theme')} has no house_prompt yet. Write one "
+                         f"into its theme.json before generating posters.")
     parts = []
     if reference_note:
         parts.append(reference_note.strip())

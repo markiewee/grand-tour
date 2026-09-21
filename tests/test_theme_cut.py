@@ -55,6 +55,19 @@ def test_a_disc_on_a_card_comes_out_filling_the_square():
     assert out.getpixel((60, 3))[0] < CREAM[0] - 8
 
 
+def test_the_two_moon_modes_are_not_the_same_crop():
+    """A disc on a card and a disc drawn past its frame want opposite treatment, and the whole
+    reason the flag exists is that the wrong one shows card inside the moon."""
+    on_a_card = Image.new("RGB", (400, 500), CREAM)
+    ImageDraw.Draw(on_a_card).ellipse((40, 60, 200, 220), fill=GREY)
+    trimmed = theme_cut.moon(on_a_card, "trim", size=120)
+    filled = theme_cut.moon(on_a_card, "fill", size=120)
+    assert trimmed.size == filled.size == (120, 120)
+    card = lambda px: abs(px[0] - CREAM[0]) < 10 and abs(px[2] - CREAM[2]) < 10
+    assert not card(trimmed.getpixel((60, 4))), "trim left the card inside the disc"
+    assert card(filled.getpixel((60, 4))), "fill is behaving like trim, so the flag does nothing"
+
+
 def test_a_disc_drawn_past_its_frame_keeps_its_middle():
     im = Image.new("RGB", (400, 500), GREY)
     ImageDraw.Draw(im).ellipse((-60, 40, 460, 460), fill=(240, 236, 210))
