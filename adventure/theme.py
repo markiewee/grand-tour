@@ -58,3 +58,30 @@ def load(name_or_path):
         if not data.get("rise", {}).get(key):
             raise ValueError(f"{directory.name}: rise is missing {key}")
     return data
+
+
+PLACEHOLDER = re.compile(r"\{([a-z_]+)\}")
+
+
+def base_copy():
+    with open(BASE / "copy.json", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def copy_for(loaded):
+    """Base words, then the theme's own, with the theme's noun dropped into both.
+
+    A journey file can override any of these again in the browser, so this is the middle layer of
+    three and never the last word.
+    """
+    words = base_copy()
+    words.update(loaded.get("copy") or {})
+    rise = loaded["rise"]
+    out = {}
+    for key, line in words.items():
+        filled = PLACEHOLDER.sub(lambda m: str(rise.get(m.group(1), m.group(0))), line)
+        left = PLACEHOLDER.search(filled)
+        if left:
+            raise ValueError(f"{loaded['name']}: copy.{key} has nothing to put in {left.group(0)}")
+        out[key] = filled
+    return out
