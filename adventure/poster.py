@@ -1,6 +1,5 @@
 """Turn a poster concept into a prompt, then generate takes with Gemini or write a Flow card."""
 import base64
-import json
 import mimetypes
 import os
 
@@ -9,19 +8,14 @@ NO_TEXT = ("Absolutely no text of any kind: no letters, no numbers, no signs, no
 DEFAULT_MODEL = "gemini-3-pro-image"
 
 
-def load_style(path):
-    with open(path, encoding="utf-8") as fh:
-        return json.load(fh)
-
-
-def build_prompt(concept, style, reference_note=None):
+def build_prompt(concept, theme, reference_note=None):
     parts = []
     if reference_note:
         parts.append(reference_note.strip())
     parts.append("Concept: " + concept.strip())
-    parts.append("Style: " + style["house_prompt"].strip() + ".")
-    if style.get("avoid"):
-        parts.append("Avoid " + ", ".join(style["avoid"]) + ".")
+    parts.append("Style: " + theme["house_prompt"].strip() + ".")
+    if theme.get("avoid"):
+        parts.append("Avoid " + ", ".join(theme["avoid"]) + ".")
     parts.append(NO_TEXT)
     return " ".join(parts)
 
