@@ -6,6 +6,7 @@ envelope opens, only what the envelope is made of and what the screen says.
 """
 import json
 import re
+import shutil
 from pathlib import Path
 
 THEMES = Path(__file__).resolve().parent.parent / "templates" / "themes"
@@ -103,6 +104,30 @@ def css(loaded):
     families = "\n".join(f'  --{k}: {loaded["fonts"][k]};' for k in FONTS)
     return CSS.format(name=loaded["name"], query=loaded["fonts"].get("query", ""),
                       tokens=tokens, families=families)
+
+
+def apply_to(app, name_or_path):
+    """Put a theme into a scaffolded app: its art, its words, its colours.
+
+    Everything written here is generated. The app keeps no link back to the theme folder, so a
+    deployed journey carries one set of art and works with the plugin uninstalled.
+    """
+    app = Path(app)
+    loaded = load(name_or_path)
+    art = app / "public" / "img" / "art"
+    art.mkdir(parents=True, exist_ok=True)
+    source = loaded["dir"] / "img" / "art"
+    for name in ART:
+        src = source / (loaded["rise"]["asset"] if name == "rise.png" else name)
+        if not src.exists():
+            raise FileNotFoundError(f"{loaded['dir'].name}: no {src.name} to copy in as {name}")
+        shutil.copyfile(src, art / name)
+    data = {"name": loaded["name"], "rise": loaded["rise"], "copy": copy_for(loaded)}
+    out = app / "public" / "data" / "theme.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    (app / "public" / "css" / "theme.css").write_text(css(loaded), encoding="utf-8")
+    return loaded
 
 
 def _channel(value):

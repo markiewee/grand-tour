@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from adventure import journey
+from adventure.__main__ import ENGINE
 
 TEMPLATE = os.path.join(os.path.dirname(__file__), "..", "templates", "journey")
 EXAMPLE = os.path.join(os.path.dirname(__file__), "..", "templates", "trip.example.json")
@@ -309,3 +310,14 @@ def test_the_short_name_drops_the_article_and_cuts_on_a_word(tmp_path):
         journey.build(app)
         m = json.loads((app / "public" / "manifest.webmanifest").read_text("utf-8"))
         assert m["short_name"] == want, f"{title} became {m['short_name']}"
+
+
+def test_new_copies_the_theme_art_and_writes_the_generated_files(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    art = app / "public" / "img" / "art"
+    assert (art / "rise.png").exists()
+    assert not (art / "crane.png").exists()
+    assert (app / "public" / "css" / "theme.css").read_text().count("--night:") == 1
+    words = json.loads((app / "public" / "data" / "theme.json").read_text())
+    assert words["copy"]["send"] == "Send it up as a crane"
+    assert words["rise"]["many"] == "cranes"

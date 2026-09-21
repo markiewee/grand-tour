@@ -327,9 +327,10 @@ def _stamp(app, files):
     return version
 
 
-def new(template, dest, trip=None, midnight=None):
-    """Copy the engine to a new app. With a planning trip file it also drafts the stops, leaving
-    every line of writing empty: the dates and the places can be worked out, the words cannot."""
+def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
+    """Copy the engine to a new app and dress it in a theme. With a planning trip file it also
+    drafts the stops, leaving every line of writing empty: the dates and the places can be worked
+    out, the words cannot."""
     template, dest = Path(template).resolve(), Path(dest)
     if dest.exists() and any(dest.iterdir()):
         raise FileExistsError(f"{dest} already has something in it")
@@ -346,6 +347,8 @@ def new(template, dest, trip=None, midnight=None):
         return out
 
     shutil.copytree(template, dest, ignore=leave_out, dirs_exist_ok=True)
+    from . import theme as theme_mod
+    theme_mod.apply_to(dest, theme_name)
     if trip:
         with open(trip, encoding="utf-8") as fh:
             _write(dest, _draft(json.load(fh), midnight))
