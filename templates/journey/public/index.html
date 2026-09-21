@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0e1430">
+<meta name="theme-color" content="#121a33">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,6 +24,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/journey.css">
+<script>
+  /* The browser chrome cannot read a var(), so the theme's night is copied into the meta tag
+     once the stylesheets above have loaded. The literal in the tag is only the first paint. */
+  { const n = getComputedStyle(document.documentElement).getPropertyValue('--night').trim();
+    if (n) document.querySelector('meta[name="theme-color"]').content = n; }
+</script>
 </head>
 <body>
 <div class="device" id="device">
@@ -84,7 +90,7 @@
           <div class="aura" id="aura"></div>
           <div class="half l" id="halfL"></div>
           <div class="half r" id="halfR"></div>
-          <svg class="crack" id="crack" viewBox="0 0 100 100"><polyline points="52,0 47,30 56,52 46,74 51,100" fill="none" stroke="#ffe6a8" stroke-width="2.4" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px #ffd27a)"/></svg>
+          <svg class="crack" id="crack" viewBox="0 0 100 100"><polyline points="52,0 47,30 56,52 46,74 51,100" fill="none" stroke="color-mix(in srgb, var(--gold-soft) 68%, white)" stroke-width="2.4" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px var(--gold-soft))"/></svg>
           <svg class="ring" viewBox="0 0 128 128"><circle class="track" cx="64" cy="64" r="60"/><circle id="ringFill" cx="64" cy="64" r="60" transform="rotate(-90 64 64)"/></svg>
         </div>
       </div>
@@ -104,7 +110,7 @@
         <div class="grain" data-grain style="opacity:.35"></div>
       </div>
       <div class="plates" id="chips">
-        <span class="chip" style="background:#a4bcb8"></span><span class="chip" style="background:#2e6a5c"></span><span class="chip" style="background:#d6a13f"></span><span class="chip" style="background:#b3342b"></span><span class="chip" style="background:#1b2340"></span>
+        <span class="chip" data-chip="mist"></span><span class="chip" data-chip="jade"></span><span class="chip" data-chip="gold"></span><span class="chip" data-chip="red"></span><span class="chip" data-chip="ink"></span>
       </div>
       <div class="plate-lbl lbl red" id="plateLbl">&nbsp;</div>
       <div class="content">

@@ -127,13 +127,13 @@ function renderRoute() {
         const cp = svg('clipPath', { id: `cp-${s.id}` }); cp.appendChild(svg('circle', { cx: x, cy: y, r })); defs.appendChild(cp);
         g.appendChild(svg('image', { href: `img/thumbs/${s.poster}.jpg`, x: x - r, y: y - r * 1.34, width: r * 2, height: r * 2.68, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#cp-${s.id})` }));
       } else {
-        g.appendChild(svg('circle', { cx: x, cy: y, r: r - 2, fill: s.kind === 'midnight' ? '#efe3c6' : '#2e6a5c' }));
+        g.appendChild(svg('circle', { cx: x, cy: y, r: r - 2, fill: s.kind === 'midnight' ? 'var(--paper)' : 'var(--jade)' }));
       }
       g.appendChild(svg('circle', { class: 'ring', cx: x, cy: y, r: r + .5 }));
     } else if (nx && s.id === nx.id) {
-      const pulse = svg('circle', { cx: x, cy: y, r: 11, fill: 'none', stroke: '#d6a13f', 'stroke-width': 1.6, id: 'pulse' });
+      const pulse = svg('circle', { cx: x, cy: y, r: 11, fill: 'none', stroke: 'var(--gold)', 'stroke-width': 1.6, id: 'pulse' });
       g.appendChild(pulse);
-      g.appendChild(svg('circle', { cx: x, cy: y, r: 6.5, fill: st === 'ready' ? '#b3342b' : 'rgba(179,52,43,.35)', stroke: '#f0cf86', 'stroke-width': 1.6 }));
+      g.appendChild(svg('circle', { cx: x, cy: y, r: 6.5, fill: st === 'ready' ? 'var(--red)' : 'color-mix(in srgb, var(--red) 35%, transparent)', stroke: 'var(--gold-soft)', 'stroke-width': 1.6 }));
     } else {
       g.appendChild(svg('circle', { class: 'stop-dot', cx: x, cy: y, r: s.kind ? 3.4 : 2.6 }));
     }

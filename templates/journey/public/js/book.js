@@ -13,7 +13,7 @@ function qrSvg(url) {
   const n = q.getModuleCount(); let d = '';
   for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
   const box = document.createElement('div'); box.className = 'qr';
-  box.innerHTML = `<svg viewBox="-2 -2 ${n + 4} ${n + 4}" shape-rendering="crispEdges"><rect x="-2" y="-2" width="${n + 4}" height="${n + 4}" fill="#efe3c6"/><path d="${d}" fill="#1b2340"/></svg>`;
+  box.innerHTML = `<svg viewBox="-2 -2 ${n + 4} ${n + 4}" shape-rendering="crispEdges"><rect x="-2" y="-2" width="${n + 4}" height="${n + 4}" fill="var(--paper)"/><path d="${d}" fill="var(--ink)"/></svg>`;
   return box;
 }
 

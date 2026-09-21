@@ -16,24 +16,24 @@ const SEAL_SVG = (k) => `
     </filter>
     <filter id="sheen${k}" x="-15%" y="-15%" width="130%" height="130%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="1.8" result="b"/>
-      <feSpecularLighting in="b" surfaceScale="3.2" specularConstant=".85" specularExponent="18" lighting-color="#ffe2d2" result="s">
+      <feSpecularLighting in="b" surfaceScale="3.2" specularConstant=".85" specularExponent="18" lighting-color="color-mix(in srgb, var(--gold-soft) 40%, white)" result="s">
         <fePointLight x="26" y="18" z="70"/>
       </feSpecularLighting>
       <feComposite in="s" in2="SourceAlpha" operator="in" result="si"/>
       <feComposite in="SourceGraphic" in2="si" operator="arithmetic" k1="0" k2="1" k3=".6" k4="0"/>
     </filter>
     <radialGradient id="wax${k}" cx="40%" cy="36%" r="72%">
-      <stop offset="0" stop-color="#d85a4d"/><stop offset=".55" stop-color="#b3342b"/><stop offset="1" stop-color="#6c1b16"/>
+      <stop offset="0" stop-color="color-mix(in srgb, var(--red) 81%, white)"/><stop offset=".55" stop-color="var(--red)"/><stop offset="1" stop-color="color-mix(in srgb, var(--red) 59%, black)"/>
     </radialGradient>
     <linearGradient id="goldg${k}" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fbe3a4"/><stop offset=".5" stop-color="#d6a13f"/><stop offset="1" stop-color="#9c6d1c"/>
+      <stop offset="0" stop-color="color-mix(in srgb, var(--gold-soft) 72%, white)"/><stop offset=".5" stop-color="var(--gold)"/><stop offset="1" stop-color="color-mix(in srgb, var(--gold) 70%, black)"/>
     </linearGradient>
   </defs>
   <g filter="url(#sheen${k})">
     <circle cx="50" cy="50" r="41" fill="url(#wax${k})" filter="url(#edge${k})"/>
-    <circle cx="50" cy="50" r="29" fill="none" stroke="#7d201a" stroke-width="2.4" opacity=".75"/>
-    <circle cx="50" cy="50" r="29" fill="none" stroke="#e0685a" stroke-width=".8" opacity=".5" transform="translate(-.6 -.6)"/>
-    <path d="M55 32 A19 19 0 1 0 55 68 A24 24 0 0 1 55 32 Z" fill="url(#goldg${k})" stroke="#7a4e10" stroke-width=".6"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="color-mix(in srgb, var(--red) 69%, black)" stroke-width="2.4" opacity=".75"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="color-mix(in srgb, var(--red) 74%, white)" stroke-width=".8" opacity=".5" transform="translate(-.6 -.6)"/>
+    <path d="M55 32 A19 19 0 1 0 55 68 A24 24 0 0 1 55 32 Z" fill="url(#goldg${k})" stroke="color-mix(in srgb, var(--gold) 52%, black)" stroke-width=".6"/>
     <circle cx="62" cy="40" r="1.9" fill="url(#goldg${k})"/><circle cx="66" cy="50" r="1.3" fill="url(#goldg${k})"/><circle cx="61" cy="59" r="1.6" fill="url(#goldg${k})"/>
   </g>
 </svg>`;
@@ -196,7 +196,7 @@ export function showEnvelope(stop, isReady, labels) {
   $('#hintLbl').textContent = isReady ? 'Press and hold the seal' : 'Sealed';
   $('#hintSub').textContent = labels.hint;
   $('#seal').setAttribute('aria-label', isReady ? 'Press and hold to open' : 'Sealed until its time');
-  document.getElementById('device').style.setProperty('--letter-in', stop.kind === 'midnight' ? '#0e1430' : stop.kind === 'book' ? '#d9ccae' : '#efe3c6');
+  document.getElementById('device').style.setProperty('--letter-in', stop.kind === 'midnight' ? 'var(--night)' : stop.kind === 'book' ? 'color-mix(in srgb, var(--paper) 90%, black)' : 'var(--paper)');
 }
 
 // QA: jump straight into the middle of the opening

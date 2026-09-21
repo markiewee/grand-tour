@@ -7,6 +7,16 @@ const gsap = window.gsap;
 const $ = (s) => document.querySelector(s);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PLATES = ['mist', 'jade', 'gold', 'red', 'ink'];
+// GSAP tweens colour by parsing it, and it cannot parse a var() or a color-mix(), so the theme's
+// own value is read off a throwaway element and handed over as plain rgb().
+function themeColor(css) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;color:${css}`;
+  document.body.appendChild(probe);
+  const out = getComputedStyle(probe).color;
+  probe.remove();
+  return out;
+}
 let current = null, handlers = {}, printTl = null;
 
 export function setupStop(h) {
@@ -91,7 +101,7 @@ function send() {
   if (reduced) { handlers.onFlown(stop); return; }
   const tl = gsap.timeline();
   tl.to('#q > *', { opacity: 0, duration: .25 })
-    .to(q, { width: 44, height: 56, x: (r.width - 44) / 2, borderRadius: '46% 46% 48% 48%', background: '#e98b3a', boxShadow: '0 0 40px 14px rgba(255,170,80,.6)', duration: .6, ease: 'power3.inOut' }, .15)
+    .to(q, { width: 44, height: 56, x: (r.width - 44) / 2, borderRadius: '46% 46% 48% 48%', background: themeColor('var(--gold)'), boxShadow: `0 0 40px 14px ${themeColor('color-mix(in srgb, var(--gold) 60%, transparent)')}`, duration: .6, ease: 'power3.inOut' }, .15)
     .add(() => { gsap.set(fly, { left: cx, top: cy - r.height / 2 + 28, opacity: 1, x: 0, scale: 1 }); q.style.visibility = 'hidden'; sfx.chime(); }, .78)
     .add(() => handlers.onLeaving(stop), .8)
     .to(fly, { top: d.height * .2, left: d.width * .5, scale: .45, duration: 3.0, ease: 'power1.inOut' }, 1.3)
