@@ -24,7 +24,7 @@ export function setupStop(h) {
   $('#sendBtn').addEventListener('click', send);
   $('#doneBtn').addEventListener('click', () => handlers.onDone(current));
   $('#stopBack').addEventListener('click', () => handlers.onDone(current));
-  $('#answer').addEventListener('input', () => { $('#answer').placeholder = 'Write it here…'; });
+  $('#answer').addEventListener('input', () => { $('#answer').placeholder = t('answerPlaceholder'); });
 }
 
 export function renderStop(stop, ctx) {
@@ -61,7 +61,7 @@ function showPrinted() {
   $('#finalPoster').style.opacity = 1;
   document.querySelectorAll('#press img[data-plate]').forEach((im) => { im.style.opacity = 0; });
   document.querySelectorAll('#chips .chip').forEach((c) => { c.style.opacity = 1; c.style.transform = 'scale(1)'; });
-  $('#plateLbl').textContent = 'Printed';
+  $('#plateLbl').textContent = t('printed');
   document.querySelectorAll('#stop .reveal').forEach((r) => { r.style.opacity = 1; r.style.transform = 'none'; });
 }
 
@@ -79,7 +79,7 @@ export function printPoster() {
       .to(chips[i], { opacity: 1, scale: 1, duration: .3, ease: 'back.out(3)' }, at);
   });
   tl.to('#finalPoster', { opacity: 1, duration: .9, ease: 'power2.inOut' }, plates.length * .62 + .15)
-    .add(() => { lbl.textContent = 'Printed'; }, plates.length * .62 + .15)
+    .add(() => { lbl.textContent = t('printed'); }, plates.length * .62 + .15)
     .to('#stop .reveal', { opacity: 1, y: 0, duration: .7, stagger: .09, ease: 'power3.out' }, plates.length * .62 + .5);
 }
 export function finishPrinting() { if (printTl) printTl.progress(1); }
@@ -88,7 +88,7 @@ export function finishPrinting() { if (printTl) printTl.progress(1); }
 function send() {
   const text = $('#answer').value.trim();
   if (!text) {
-    $('#answer').placeholder = 'Write a few words first';
+    $('#answer').placeholder = t('answerFirst');
     gsap.fromTo('#answer', { x: 0 }, { x: 6, duration: .06, yoyo: true, repeat: 5, onComplete: () => gsap.set('#answer', { x: 0 }) });
     return;
   }

@@ -2,6 +2,7 @@
 // open on its lotus lining, and a letter folded in thirds comes out, unfolds and becomes the page.
 import { sfx, audio } from './audio.js';
 import { look } from './sky.js';
+import { t } from './copy.js';
 
 const gsap = window.gsap;
 const $ = (s) => document.querySelector(s);
@@ -193,7 +194,7 @@ export function showEnvelope(stop, isReady, labels) {
   current = stop; ready = isReady;
   $('#envLbl').textContent = labels.when;
   $('#envPlace').textContent = labels.place;
-  $('#hintLbl').textContent = isReady ? 'Press and hold the seal' : 'Sealed';
+  $('#hintLbl').textContent = isReady ? t('sealHint') : t('sealedLabel');
   $('#hintSub').textContent = labels.hint;
   $('#seal').setAttribute('aria-label', isReady ? 'Press and hold to open' : 'Sealed until its time');
   document.getElementById('device').style.setProperty('--letter-in', stop.kind === 'midnight' ? 'var(--night)' : stop.kind === 'book' ? 'color-mix(in srgb, var(--paper) 90%, black)' : 'var(--paper)');

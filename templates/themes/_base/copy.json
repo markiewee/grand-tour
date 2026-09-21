@@ -17,6 +17,8 @@
   "readBook": "Read your book",
   "question": "A question for you",
   "answerPlaceholder": "Write it here…",
+  "answerFirst": "Write a few words first",
+  "printed": "Printed",
   "send": "Send it up as {a}",
   "sent": "It is {a} in your sky",
   "toastLabel": "Sent",
