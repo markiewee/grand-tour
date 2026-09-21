@@ -106,6 +106,28 @@ def css(loaded):
                       tokens=tokens, families=families)
 
 
+def art_of(loaded):
+    """Where each of the app's six art files comes from in the theme folder."""
+    source = loaded["dir"] / "img" / "art"
+    return {name: source / (loaded["rise"]["asset"] if name == "rise.png" else name)
+            for name in ART}
+
+
+def check_art(name_or_path):
+    """Every picture a theme owes, or the first one it does not have.
+
+    Scaffolding copies the engine before it dresses it, so a theme found wanting halfway through
+    would leave a directory that cannot be written to again and cannot be finished. Ask first.
+    """
+    loaded = load(name_or_path)
+    missing = [str(src.name) for src in art_of(loaded).values() if not src.exists()]
+    if missing:
+        raise FileNotFoundError(f"{loaded['dir'].name} has no {', '.join(missing)}. "
+                                f"Run `adventure theme cut {loaded['dir'].name} --from <folder>` "
+                                f"once the pictures are generated.")
+    return loaded
+
+
 def apply_to(app, name_or_path):
     """Put a theme into a scaffolded app: its art, its words, its colours.
 
@@ -116,9 +138,7 @@ def apply_to(app, name_or_path):
     loaded = load(name_or_path)
     art = app / "public" / "img" / "art"
     art.mkdir(parents=True, exist_ok=True)
-    source = loaded["dir"] / "img" / "art"
-    for name in ART:
-        src = source / (loaded["rise"]["asset"] if name == "rise.png" else name)
+    for name, src in art_of(loaded).items():
         if not src.exists():
             raise FileNotFoundError(f"{loaded['dir'].name}: no {src.name} to copy in as {name}")
         shutil.copyfile(src, art / name)

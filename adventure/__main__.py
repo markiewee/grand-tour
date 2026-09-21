@@ -71,6 +71,7 @@ def main(argv=None):
     p.add_argument("app")
     p.add_argument("--trip", help="a planning trip.json to draft the stops from")
     p.add_argument("--theme", default="lantern-night", help="a theme name or a path to a theme folder")
+    p.add_argument("--force", action="store_true", help="retheme a journey that has already been opened")
     p.add_argument("--template", help="where to copy the engine from (default: the plugin's templates/journey)")
 
     p = sub.add_parser("theme", help="scaffold a theme or cut its art to size")
@@ -123,7 +124,7 @@ def main(argv=None):
             _print({"app": str(journey.new(args.template or ENGINE, args.app, args.trip,
                                            theme_name=args.theme))})
         elif args.action == "retheme":
-            _print(journey.retheme(args.app, args.theme))
+            _print(journey.retheme(args.app, args.theme, force=args.force))
         else:
             _print(journey.build(args.app))
     elif args.cmd == "theme":

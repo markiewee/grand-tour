@@ -5,7 +5,8 @@
 // across and simply added rows below the screen: at fifty letters, thirty five of them were out of
 // reach and the last one landed fifty seconds in. layout() below fits the count to the space.
 import { openMemo } from './memo.js';
-import { rise } from './copy.js';
+import { journey } from './trip.js';
+import { rise, t } from './copy.js';
 import { sfx } from './audio.js';
 
 const gsap = window.gsap;
@@ -96,8 +97,11 @@ export function showMidnight(letters, j) {
       const r = el.getBoundingClientRect();
       openMemo({
         // The label and the title must not both be the name, which read as "From Sam / Sam".
-        when: l.last ? `From ${l.from}` : 'A letter', title: l.last ? 'Happy birthday' : l.from,
-        a: l.text, audio: l.audio, video: l.video, hint: 'Tap outside to put it back',
+        // The last letter's title is the journey's own, because not every journey has a birthday
+        // in it and the engine has no business assuming one.
+        when: l.last ? `From ${l.from}` : t('aLetter'),
+        title: l.last ? ((journey().midnight || {}).letterTitle || t('lastLetter')) : l.from,
+        a: l.text, audio: l.audio, video: l.video, hint: t('putItBack'),
       }, { x: r.left - d.left + r.width / 2, y: r.top - d.top + 28 });
     });
   });

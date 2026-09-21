@@ -201,7 +201,10 @@ def _theme_errors(app):
                 found.append(f"the theme has no word for {key}")
 
     css_file = app / "public" / "css" / "theme.css"
-    if css_file.exists():
+    if not css_file.exists():
+        found.append("there is no public/css/theme.css, so the app has no palette and no "
+                     "typefaces; run `journey retheme` to write one")
+    else:
         tokens = dict(re.findall(r"--([a-z-]+): *(#[0-9a-fA-F]{6});",
                                  css_file.read_text(encoding="utf-8")))
         if "ivory" in tokens and "night" in tokens:
@@ -378,9 +381,13 @@ def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
     """Copy the engine to a new app and dress it in a theme. With a planning trip file it also
     drafts the stops, leaving every line of writing empty: the dates and the places can be worked
     out, the words cannot."""
+    from . import theme as theme_mod
     template, dest = Path(template).resolve(), Path(dest)
     if dest.exists() and any(dest.iterdir()):
         raise FileExistsError(f"{dest} already has something in it")
+    # Before the engine is copied, not after: a theme that turns out to be short of a picture
+    # halfway through leaves a directory new() will refuse to write to a second time.
+    theme_mod.check_art(theme_name)
 
     def leave_out(directory, names):
         here = Path(directory).resolve()
@@ -394,7 +401,6 @@ def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
         return out
 
     shutil.copytree(template, dest, ignore=leave_out, dirs_exist_ok=True)
-    from . import theme as theme_mod
     theme_mod.apply_to(dest, theme_name)
     if trip:
         with open(trip, encoding="utf-8") as fh:
@@ -402,21 +408,44 @@ def new(template, dest, trip=None, midnight=None, theme_name="lantern-night"):
     return dest
 
 
-def retheme(app, theme_name):
+# What a traveller has done lives on their phone and in the app's own file store, neither of
+# which this command can see. The rehearsal server's log is the one piece of evidence that is on
+# disk, so it is what the refusal can actually stand on.
+TRAVELLED = "data/events.json"
+
+CAUTION = ("retheme cannot see the traveller's phone. If they have started, their answers were "
+           "written under the old theme's noun and will read oddly under the new one.")
+
+
+def travelled(app):
+    """When the journey was last opened or answered, as far as anything on disk knows."""
+    log = Path(app) / TRAVELLED
+    if not log.exists():
+        return []
+    try:
+        with open(log, encoding="utf-8") as fh:
+            events = json.load(fh)
+    except (json.JSONDecodeError, OSError):
+        return []
+    return events if isinstance(events, list) else []
+
+
+def retheme(app, theme_name, force=False):
     """Dress an existing app in a different theme.
 
     A traveller's own sent answer was written under one noun and reading it back under another
-    would put words in their mouth, so an app that has been travelled is left alone.
+    puts words in their mouth, so a journey that has visibly begun is left alone unless the
+    sender insists. The evidence is only ever partial, so the caution goes out either way.
     """
     from . import theme as theme_mod
     app = Path(app)
-    trip = app / "public" / "data" / "trip.json"
-    if trip.exists():
-        with open(trip, encoding="utf-8") as fh:
-            if json.load(fh).get("answers"):
-                raise ValueError("this journey has been answered; retheming it would rewrite "
-                                 "words the traveller has already read")
-    return {"app": str(app), "theme": theme_mod.apply_to(app, theme_name)["name"]}
+    seen = travelled(app)
+    if seen and not force:
+        raise ValueError(f"this journey has been opened {len(seen)} times already. Retheming it "
+                         f"would rewrite words the traveller has read. Pass --force if you mean "
+                         f"it. {CAUTION}")
+    return {"app": str(app), "theme": theme_mod.apply_to(app, theme_name)["name"],
+            "caution": CAUTION, "opened": len(seen)}
 
 
 def _time(value):

@@ -14,7 +14,8 @@
    "hint": "Happy birthday.",
    "title": "Happy birthday, Ren",
    "dayLabel": "Sunday 4 April · Kyoto",
-   "closes": "2027-04-03T23:59:00+09:00"
+   "closes": "2027-04-03T23:59:00+09:00",
+   "letterTitle": "Happy birthday"
   },
   "callback": {
    "at": "2027-05-01T00:00:00+09:00",
