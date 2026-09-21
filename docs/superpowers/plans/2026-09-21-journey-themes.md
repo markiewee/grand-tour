@@ -1681,3 +1681,25 @@ Out of scope items are not implemented anywhere.
 **One trap worth repeating:** `renderSheet` in `app.js` has a local variable called `t`. Rename it
 to `time` before importing the copy helper, or the helper is shadowed inside that function and
 every label in the bottom sheet silently becomes a formatted time.
+
+---
+
+## Amendment, found while executing
+
+`letterbox.html` and `key.html` were not in the plan and they need the same treatment as
+`index.html`, or the letterbox and the sender's key page stay in the old palette while the app
+changes underneath them. Three things in each:
+
+1. They carry their own `<link>` to Google Fonts with the four art deco families hardcoded, and
+   their own inline `<style>` block using colours written out by hand. Both pages gain
+   `<link rel="stylesheet" href="css/theme.css">` before their `<style>` block, their Google
+   Fonts `<link>` goes, and the colours in the inline block become `var(--token)`.
+2. `letterbox.html` line 29 draws `img/art/lantern.png`, which is `img/art/rise.png` after Task 8.
+3. `letterbox.html` has a `<meta name="description">` and an `og:description` ending "and then it
+   comes down as a lantern". That sentence belongs to one journey, not to the engine. It is
+   written by `journey build`, which already rewrites the meta block between the `ga:meta`
+   markers, so check `_page()` in `adventure/journey.py` covers `letterbox.html` and take the
+   sentence from the journey file rather than the theme.
+
+This belongs to Task 7 for the stylesheet links, Task 8 for the art filename, and Task 9 for the
+inline colours.
