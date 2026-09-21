@@ -4,7 +4,7 @@ import json
 import pathlib
 import sys
 
-from . import commons, journey, plates, poster, qa, render, theme, trip, weather
+from . import commons, journey, plates, poster, qa, render, theme, theme_cut, trip, weather
 
 ENGINE = pathlib.Path(__file__).resolve().parent.parent / "templates" / "journey"
 
@@ -73,6 +73,16 @@ def main(argv=None):
     p.add_argument("--theme", default="lantern-night", help="a theme name or a path to a theme folder")
     p.add_argument("--template", help="where to copy the engine from (default: the plugin's templates/journey)")
 
+    p = sub.add_parser("theme", help="scaffold a theme or cut its art to size")
+    p.add_argument("action", choices=["new", "cut"])
+    p.add_argument("name")
+    p.add_argument("--dest", help="where to write it (default: the plugin's templates/themes/<name>)")
+    p.add_argument("--from", dest="source", help="a folder of generated images, for cut")
+    p.add_argument("--moon", choices=["fill", "trim"], default="fill",
+                   help="fill if the disc runs past its frame, trim if it sits on a plain card")
+    p.add_argument("--sky-bias", type=float, default=0.5,
+                   help="0 keeps the top of the sky, 1 keeps the bottom, 0.5 the middle")
+
     p = sub.add_parser("plates", help="cut a poster into a phone-sized poster, a thumb and five plates")
     p.add_argument("image")
     p.add_argument("--out", required=True, help="the app's public/img directory")
@@ -116,6 +126,14 @@ def main(argv=None):
             _print(journey.retheme(args.app, args.theme))
         else:
             _print(journey.build(args.app))
+    elif args.cmd == "theme":
+        if args.action == "new":
+            _print({"theme": str(theme.new(args.name, args.dest or theme.THEMES / args.name))})
+        else:
+            if not args.source:
+                parser.error("theme cut needs --from <folder of generated images>")
+            _print(theme_cut.run(args.name, args.source, dest=args.dest,
+                                 moon_mode=args.moon, sky_bias=args.sky_bias))
     elif args.cmd == "plates":
         cut = plates.cut(args.image, args.out)
         _print({"poster": str(cut["poster"]), "thumb": str(cut["thumb"]),

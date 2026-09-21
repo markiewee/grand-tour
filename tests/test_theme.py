@@ -72,3 +72,28 @@ def test_css_carries_every_token_and_the_fonts(tmp_path):
 def test_contrast_of_ivory_on_night(tmp_path):
     assert theme.contrast("#ffffff", "#000000") == 21
     assert theme.contrast("#f2e7cf", "#121a33") > 4.5
+
+
+def test_theme_new_writes_a_folder_with_an_art_brief(tmp_path):
+    made = theme.new("harbour-dusk", tmp_path / "harbour-dusk")
+    data = json.loads((made / "theme.json").read_text(encoding="utf-8"))
+    assert data["name"] == "Harbour dusk"
+    assert set(data["palette"]) == set(theme.TOKENS)
+    assert set(data["fonts"]) >= set(theme.FONTS)
+    assert data["copy"] == {}
+    prompts = (made / "PROMPTS.md").read_text(encoding="utf-8")
+    assert "768 by 1376" in prompts
+    assert "rise.png" in prompts
+    assert (made / "img" / "art").is_dir()
+
+
+def test_a_scaffolded_theme_loads_and_reads_as_the_base_words(tmp_path):
+    made = theme.new("harbour-dusk", tmp_path / "harbour-dusk")
+    words = theme.copy_for(theme.load(made))
+    assert words["send"] == "Send it up as a lantern"
+
+
+def test_theme_new_refuses_to_overwrite(tmp_path):
+    theme.new("harbour-dusk", tmp_path / "harbour-dusk")
+    with pytest.raises(FileExistsError):
+        theme.new("harbour-dusk", tmp_path / "harbour-dusk")

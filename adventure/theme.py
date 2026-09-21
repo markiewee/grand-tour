@@ -145,3 +145,66 @@ def contrast(front, back):
     a, b = _luminance(front), _luminance(back)
     lo, hi = sorted((a, b))
     return round((hi + 0.05) / (lo + 0.05), 2)
+
+
+PROMPTS = """\
+# Art for {title}
+
+Five pictures are generated and a sixth is cut from one of them. Every prompt ends with no text,
+no lettering and no signature, because a word printed into the art cannot be translated out of it
+and cannot be removed.
+
+Generators mostly offer 16:9 and 9:16. Generate at the ratio named below, then run
+`adventure theme cut {name} <folder>` and what comes out is the size in the first column. Name
+each downloaded file after its slot, so `sky.jpg`, `moon_2.jpeg` and so on.
+
+| File | Ends at | Generate at | What it is |
+|---|---|---|---|
+| `sky.jpg` | 768 by 1376 | 9:16 | the night behind everything. No moon in it, the moon is a separate picture. Keep the top third open and dark enough for pale text to sit on, and the bottom third quiet, because a sheet covers it. |
+| `moon.jpg` | 768 by 768 | 16:9 | one disc, filling the frame edge to edge. No sky around it, no rings, no border. The app masks it into a circle, so anything outside the disc shows up inside the moon. |
+| `{rise}` | 360 by 470 | 9:16 | the thing that goes up when a question is answered, on a flat background nothing like the object. It is drawn 44 pixels wide, so it has to read as a silhouette at that size. |
+| `envelope.jpg` | 920 by 649 | 16:9 | a flat sheet of paper, evenly lit. Not an envelope: no flap, no fold, no seal, nothing resting on it. The flap is drawn from a slice of this same sheet, so anything printed on it appears twice. |
+| `envelope_t.jpg` | 150 by 105 | cut from the envelope | nothing to generate |
+| `liner.jpg` | 640 by 640 | 16:9 | a repeating pattern for the inside of the envelope. The same size everywhere, no focal point, no border. |
+
+Two flags on the cut command, both worth getting right the first time:
+
+- `--moon fill` when the disc is drawn larger than its frame and runs off the edges. `--moon trim`
+  when it sits on a plain card with space around it. The wrong one leaves the card's corners
+  showing inside the circle.
+- `--sky-bias` between 0 and 1, which picks what survives when a wide picture is cut to a tall
+  one. The default keeps the middle.
+
+Write the house style once and paste it into all five prompts:
+
+> {house}
+"""
+
+
+def new(name, dest):
+    """Scaffold a theme folder to fill in, with the art brief beside it.
+
+    The palette and the fonts start as the base theme's, so a half finished theme still loads and
+    still renders. The words start empty, because every line a theme does not write is inherited.
+    """
+    dest = Path(dest)
+    if dest.exists():
+        raise FileExistsError(f"{dest} already exists")
+    (dest / "img" / "art").mkdir(parents=True)
+    title = name.replace("-", " ").replace("_", " ").strip().capitalize()
+    base = load("lantern-night")
+    data = {
+        "name": title,
+        "house_prompt": "",
+        "avoid": ["photorealism", "3D render", "gradients", "phones", "crowds", "caricature"],
+        "palette": dict(base["palette"]),
+        "fonts": dict(base["fonts"]),
+        "rise": {"asset": "rise.png", "a": "a lantern", "one": "lantern", "many": "lanterns"},
+        "copy": {},
+    }
+    (dest / "theme.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+                                     encoding="utf-8")
+    (dest / "PROMPTS.md").write_text(
+        PROMPTS.format(title=title, name=name, rise=data["rise"]["asset"],
+                       house="Your house style goes here, in one sentence."), encoding="utf-8")
+    return dest
