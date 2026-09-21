@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from adventure import journey
+from adventure import journey, theme
 from adventure.__main__ import ENGINE
 
 TEMPLATE = os.path.join(os.path.dirname(__file__), "..", "templates", "journey")
@@ -44,13 +44,17 @@ def a_journey(journey_over=None, stops=None):
 
 
 def a_dir(tmp_path, data, posters=("kix", "gion")):
-    """The smallest thing check will look at: a trip file and the posters it names."""
+    """The smallest thing check will look at: a trip file, the posters it names, and a theme.
+
+    A journey app with no theme has no pictures and no words, so check calls that an error. The
+    fixture dresses it in the default one rather than asking check to overlook it."""
     app = tmp_path / "app"
     (app / "public" / "data").mkdir(parents=True, exist_ok=True)
     (app / "public" / "img" / "posters").mkdir(parents=True, exist_ok=True)
     (app / "public" / "data" / "trip.json").write_text(json.dumps(data), "utf-8")
     for name in posters:
         (app / "public" / "img" / "posters" / f"{name}.jpg").write_bytes(b"jpg")
+    theme.apply_to(app, "lantern-night")
     return app
 
 
@@ -63,6 +67,7 @@ def an_app(tmp_path, data, posters=("kix", "gion")):
     (app / "public" / "data" / "trip.json").write_text(json.dumps(data), "utf-8")
     for name in posters:
         (app / "public" / "img" / "posters" / f"{name}.jpg").write_bytes(b"jpg")
+    theme.apply_to(app, "lantern-night")
     return app
 
 
@@ -338,3 +343,42 @@ def test_retheme_refuses_an_app_with_answers_in_it(tmp_path):
                                 "answers": {"inari": "with you"}}))
     with pytest.raises(ValueError, match="answered"):
         journey.retheme(app, "canyon-ember")
+
+
+def test_check_fails_on_a_missing_art_file(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    (app / "public" / "img" / "art" / "moon.jpg").unlink()
+    assert any("moon.jpg" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_art_of_the_wrong_size(tmp_path):
+    from PIL import Image
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    Image.new("RGB", (10, 10)).save(app / "public" / "img" / "art" / "sky.jpg")
+    assert any("sky.jpg" in e and "768" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_a_missing_word(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    path = app / "public" / "data" / "theme.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["copy"].pop("send")
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert any("send" in e for e in journey.check(app)["errors"])
+
+
+def test_check_fails_on_unreadable_contrast(tmp_path):
+    app = journey.new(ENGINE, tmp_path / "app", theme_name="kyoto-woodblock")
+    css = app / "public" / "css" / "theme.css"
+    css.write_text(css.read_text(encoding="utf-8").replace("--ivory: #efe8d2;", "--ivory: #1a2740;"),
+                   encoding="utf-8")
+    assert any("contrast" in e for e in journey.check(app)["errors"])
+
+
+def test_a_freshly_themed_app_passes_the_theme_checks(tmp_path):
+    """The three shipped themes have to survive their own checks, or nobody can ship one."""
+    for name in ("lantern-night", "kyoto-woodblock", "canyon-ember"):
+        app = journey.new(ENGINE, tmp_path / name, theme_name=name)
+        theme_errors = [e for e in journey.check(app)["errors"]
+                        if "theme" in e or "contrast" in e or "art" in e]
+        assert theme_errors == [], f"{name}: {theme_errors}"

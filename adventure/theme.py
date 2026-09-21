@@ -126,7 +126,9 @@ def apply_to(app, name_or_path):
     out = app / "public" / "data" / "theme.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-    (app / "public" / "css" / "theme.css").write_text(css(loaded), encoding="utf-8")
+    stylesheet = app / "public" / "css" / "theme.css"
+    stylesheet.parent.mkdir(parents=True, exist_ok=True)
+    stylesheet.write_text(css(loaded), encoding="utf-8")
     return loaded
 
 

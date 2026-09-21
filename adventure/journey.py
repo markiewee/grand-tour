@@ -17,6 +17,8 @@ import unicodedata
 import zoneinfo
 from pathlib import Path
 
+from PIL import Image
+
 # api/events.js turns away any other shape of id, so a stop it cannot post is a stop that opens
 # without the sender ever knowing it did.
 ID = re.compile(r"^[a-z0-9]{1,24}$")
@@ -162,7 +164,52 @@ def check(app):
     times = sorted(filter(None, (_moment(stop.get("opensAt")) for stop in stops)))
     if times and (times[-1] - times[0]).days > 30:
         warnings.append("more than 30 days between the first and last stop")
+
+    errors.extend(_theme_errors(app))
     return {"errors": errors, "warnings": warnings}
+
+
+def _theme_errors(app):
+    """What a theme can be wrong about once it is inside an app.
+
+    All four of these are silent in a browser. A missing picture draws nothing, a missing word
+    prints its own key, a picture of the wrong size is stretched, and pale text on a pale sky is
+    still there, just unreadable. So they are errors rather than warnings.
+    """
+    from . import theme as theme_mod
+    found = []
+
+    art = app / "public" / "img" / "art"
+    for name, (want_w, want_h) in theme_mod.ART.items():
+        path = art / name
+        if not path.exists():
+            found.append(f"the theme art is missing {name}")
+            continue
+        with Image.open(path) as im:
+            if im.size != (want_w, want_h):
+                found.append(f"{name} is {im.size[0]}x{im.size[1]}, the engine draws it at "
+                             f"{want_w}x{want_h}")
+
+    theme_file = app / "public" / "data" / "theme.json"
+    if not theme_file.exists():
+        found.append("there is no public/data/theme.json; run `journey retheme` to write one")
+    else:
+        with open(theme_file, encoding="utf-8") as fh:
+            words = json.load(fh).get("copy", {})
+        for key in theme_mod.base_copy():
+            if not words.get(key):
+                found.append(f"the theme has no word for {key}")
+
+    css_file = app / "public" / "css" / "theme.css"
+    if css_file.exists():
+        tokens = dict(re.findall(r"--([a-z-]+): *(#[0-9a-fA-F]{6});",
+                                 css_file.read_text(encoding="utf-8")))
+        if "ivory" in tokens and "night" in tokens:
+            ratio = theme_mod.contrast(tokens["ivory"], tokens["night"])
+            if ratio < 4.5:
+                found.append(f"contrast of ivory on night is {ratio}:1, under the 4.5:1 that "
+                             "keeps body text readable")
+    return found
 
 
 def build(app):
